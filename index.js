@@ -1,5 +1,5 @@
 const SocketApp = require('./lib/app');
-const SocketNamespace = require('./lib/namespace');
+const NspBuilder = require('./lib/nspBuilder');
 // utils
 const errorHandler = require('./lib/utils/errorHandler');
 const explodeData = require('./lib/utils/explodeData');
@@ -8,10 +8,10 @@ const toArray = require('./lib/utils/toArray');
 module.exports = exports = SocketApp;
 
 /**
- * @param {string} [path]
+ * @param {string} [namespace]
  */
-exports.Namespace = function(path) {
-  return new SocketNamespace(path);
+exports.NspBuilder = function(namespace) {
+  return new NspBuilder(namespace);
 };
 
 /**

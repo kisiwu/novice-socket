@@ -3,14 +3,14 @@ const Logger = kaukau.Logger;
 
 const http = require('http');
 const socketlib = require('../../index');
-const { Namespace, utils } = socketlib;
+const { NspBuilder, utils } = socketlib;
 const { explodeData, errorHandler } = utils;
 
 
 describe("Usage", () => {
   var nsp, socketapp, server;
   it("should create namespace '/main' and add events", function() {
-    nsp = Namespace('/main')
+    nsp = NspBuilder('/main')
       // middlewares
       .add((socket, next) => {
         if (socket.request.headers.cookie) {
@@ -40,8 +40,8 @@ describe("Usage", () => {
           .emit('turned on', msg);
       })));
 
-    expect(nsp.path)
-      .to.be.a('string', 'nsp.path is not a string')
+    expect(nsp.namespace)
+      .to.be.a('string', 'nsp.namespace is not a string')
       .to.equal('/main');
 
     expect(nsp.middlewares)
@@ -118,6 +118,24 @@ describe("Usage", () => {
         .that.is.empty;
   });
 
+  it("should link namespace '/main' into app ('add' method)", function() {
+    socketapp.add('/', NspBuilder('/main').add('nothing', ()=>{}));
+
+    expect(socketapp.events)
+          .to.be.an('object', `socketapp.events is not an object`)
+          .that.has.property('/main')
+          .that.is.an('array')
+          .that.has.lengthOf(5);
+      
+    expect(socketapp.namespaces)
+        .to.be.an('array', 'socketapp.namespaces is not an array')
+        .to.eql(['/main']);
+      
+    expect(socketapp.currentNamespaces)
+        .to.be.an('array', 'socketapp.currentNamespaces is not an array')
+        .that.is.empty;
+  });
+
   it("should build app (clients can connect)", function() {
     server = http.createServer();
     var options = {};
@@ -127,7 +145,7 @@ describe("Usage", () => {
           .to.be.an('object', `socketapp.events is not an object`)
           .that.has.property('/main')
           .that.is.an('array')
-          .that.has.lengthOf(4);
+          .that.has.lengthOf(5);
 
     expect(socketapp.namespaces)
         .to.be.an('array', 'socketapp.namespaces is not an array')
