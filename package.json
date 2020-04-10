@@ -19,6 +19,6 @@
   },
   "devDependencies": {
     "express": "^4.17.1",
-    "kaukau": "0.0.65"
+    "kaukau": "0.0.70"
   }
 }
