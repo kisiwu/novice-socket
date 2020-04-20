@@ -154,9 +154,43 @@ NspBuilder('/app')
   });
 ```
 
-#### Register a middleware
+#### Register a middleware to a namespace
+
+Example
+
+```js
+const socketlib = require('@novice1/socket');
+const { NspBuilder } = socketlib;
+
+NspBuilder() 
+  .use((socket, next) => {
+    if (socket.request.headers.cookie) {
+      return next();
+    }
+    next(new Error('Authentication error'));
+  })
+```
 
 See [namespace.use(fn)](https://socket.io/docs/server-api/#namespace-use-fn)
+
+#### Register a middleware to sockets
+
+Register a middleware to all sockets of a namespace.
+
+Example
+
+```js
+const socketlib = require('@novice1/socket');
+const { NspBuilder } = socketlib;
+
+NspBuilder() 
+  .add((socket, packet, next) => {
+    if (packet.doge === true) return next();
+    next(new Error('Not a doge error'));
+  })
+```
+
+See [socket.use(fn)](https://socket.io/docs/server-api/#socket-use-fn)
 
 #### Link namespaces
 
@@ -322,6 +356,7 @@ http.listen(3000, function(){
 - **getNamespace(string) : [Namespace](https://socket.io/docs/server-api/#Namespace)**
 - **link(...NspBuilder) : this**
 - **link(string, ...NspBuilder) : this**
+- **use(...fn) : this**
 - **onConnection(..fn) : this**
 - **onDisconnect(..fn) : this**
 - [**origins**](https://socket.io/docs/server-api/#server-origins-value)

@@ -12,7 +12,7 @@ describe("Usage", () => {
   it("should create namespace '/main' and add events", function() {
     nsp = NspBuilder('/main')
       // middlewares
-      .add((socket, next) => {
+      .use((socket, next) => {
         if (socket.request.headers.cookie) {
           return next();
         }
