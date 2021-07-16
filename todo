@@ -1,0 +1,3 @@
+Upgrade:
+  - upgrade package to newest version of "socket.io"
+  - adapt code
