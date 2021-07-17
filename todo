@@ -1,5 +1,6 @@
 Upgrade:
   - upgrade package to newest version of "socket.io" @done
+  - update kaukau @done
   - adapt code
 
 typescript:

@@ -1,7 +1,7 @@
 module.exports = {
 	"enableLogs": false,
 	"exitOnFail": true,
-	"directory": "test/tests",
+	"files": "test/tests",
 	"options": {
 		"bail": false,
 		"fullTrace": true,
