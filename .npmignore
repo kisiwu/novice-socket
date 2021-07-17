@@ -1,6 +1,12 @@
+.github
+typedocIncludes
 docs
-localbckp
 private
+src
+test
+types
+todo
+typedoc.json
 
 # Logs
 logs

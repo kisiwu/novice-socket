@@ -1,0 +1,21 @@
+{
+  "entryPoints": [
+    "src/index.ts", 
+    "src/commons.ts",
+    "src/utils",
+    "src/helpers",
+    "src/generators/openapi.ts", 
+    "src/generators/openapi/definitions.ts",
+    "src/generators/openapi/helpers",
+    "src/generators/postman.ts", 
+    "src/generators/postman/definitions.ts",
+    "src/generators/postman/helpers"
+  ],
+  "out": "docs",
+
+  "excludeInternal": true,
+  "excludePrivate": true,
+  "includeVersion": true,
+  "hideGenerator": true,
+  "includes": "typedocIncludes/"
+}

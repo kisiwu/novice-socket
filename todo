@@ -1,3 +1,6 @@
 Upgrade:
-  - upgrade package to newest version of "socket.io"
+  - upgrade package to newest version of "socket.io" @done
   - adapt code
+
+typescript:
+  - write src
