@@ -4,5 +4,7 @@ Upgrade:
   - adapt code
 
 typescript:
-  - write src
-    - src/app.ts
+  - write src @done
+    - src/app.ts @done
+  - write test.ts @done
+  - change names of classes (e.g.: SocketApp => ServerApp, etc ...)
