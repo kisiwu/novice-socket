@@ -5,3 +5,4 @@ Upgrade:
 
 typescript:
   - write src
+    - src/app.ts

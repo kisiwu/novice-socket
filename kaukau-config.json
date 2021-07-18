@@ -1,4 +1,4 @@
-module.exports = {
+{
 	"enableLogs": false,
 	"exitOnFail": true,
 	"files": "test/tests",
@@ -14,4 +14,4 @@ module.exports = {
 		"ui": "bdd",
 		"color": true
 	}
-};
+}
