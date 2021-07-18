@@ -1,10 +1,9 @@
 import { Controller } from '../definitions';
 
-function errorHandler(fn: (...args: unknown[]) => void, errorEvent?: string): Controller {
-  const ctrl: Controller = function (req, res, next, ...args) {
+function errorHandler(fn: Controller, errorEvent?: string): Controller {
+  const ctrl: Controller = function (req, res, next) {
     try {
-      const allArgs = [req, res, next].concat(args);
-      fn.apply(fn, allArgs);
+      fn(req, res, next);
     } catch (err) {
       let e = err;
       if (err instanceof Error) {

@@ -1,7 +1,13 @@
-import { Controller } from '../definitions';
+import { Controller, Request, Replier, NextFunc } from '../definitions';
 
-function explodeData(fn: (...args: unknown[]) => void): Controller {
-  return function ctrl(req, res, next) {
+type Func<T> = (this: {
+  req: Request,
+  res: Replier,
+  next: NextFunc
+}, ...args: T[]) => void;
+
+function explodeData<T>(fn: Func<T>): Controller<T> {
+  const ctrl: Controller<T> = function ctrl(req, res, next) {
     const instance = {
       req,
       res,
@@ -9,6 +15,7 @@ function explodeData(fn: (...args: unknown[]) => void): Controller {
     };
     fn.apply(instance, req.data);
   };
+  return ctrl;
 }
 
 export default explodeData;

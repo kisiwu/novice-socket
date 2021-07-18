@@ -11,7 +11,7 @@ import {
 } from './definitions'
 
 
-class NspBuilder {
+export class NspBuilder {
   _id: string;
   name: string;
   middlewares: ((socket: Socket, next: (err?: ExtendedError | undefined) => void) => void)[];
@@ -45,7 +45,7 @@ class NspBuilder {
   /**
    * @description Add listener (event)
    */
-  add(name: string, ...fn: Controller[]): NspBuilder;
+  add<T = unknown>(name: string, ...fn: Controller<T>[]): NspBuilder;
   add(name: ListenerBuilderSettings, ...fn: Controller[]): NspBuilder;
   add(...fn: ListenerBuilder[]): NspBuilder;
   add(...fn: (ListenerBuilder[])[]): NspBuilder;
@@ -58,8 +58,11 @@ class NspBuilder {
    * @description NspBuilder.link
    */
   add(...fn: NspBuilder[]): NspBuilder;
+  add(namespace: string, ...fn: NspBuilder[]): NspBuilder;
   add(...fn: (NspBuilder[])[]): NspBuilder;
 
+  add(name: string | ListenerBuilderSettings | SocketMiddleware | SocketMiddleware[] | ListenerBuilder | ListenerBuilder[] | NspBuilder | NspBuilder[],
+    ...fn: (Controller | SocketMiddleware | SocketMiddleware[] | ListenerBuilder | ListenerBuilder[] | NspBuilder | NspBuilder[])[]): NspBuilder;
   add(name: string | ListenerBuilderSettings | SocketMiddleware | SocketMiddleware[] | ListenerBuilder | ListenerBuilder[] | NspBuilder | NspBuilder[],
     ...fn: (Controller | SocketMiddleware | SocketMiddleware[] | ListenerBuilder | ListenerBuilder[] | NspBuilder | NspBuilder[])[]): NspBuilder {
 
@@ -70,9 +73,13 @@ class NspBuilder {
       || (name && typeof name === 'object' && !Array.isArray(name))
       && !(name instanceof NspBuilder)
       && !(name instanceof ListenerBuilder)) {
-      const handlers: Controller[] = <Controller[]>args.filter(arg => (typeof arg === 'function'));
-      args = [new ListenerBuilder(name, ...handlers)];
-      treatedFirstArg = true;
+        if (typeof name === 'string' && args.some(arg => (arg instanceof NspBuilder))) {
+          return this.link(name, ...<NspBuilder[]>args.filter(arg => (arg instanceof NspBuilder)));
+        } else {
+          const handlers: Controller[] = <Controller[]>args.filter(arg => (typeof arg === 'function'));
+          args = [new ListenerBuilder(name, ...handlers)];
+        }
+        treatedFirstArg = true;
     }
 
     // create 3 arrays from arguments
@@ -171,6 +178,7 @@ class NspBuilder {
    */
   use(...fn: Middleware[]): NspBuilder;
   use(fn: Middleware[]): NspBuilder;
+  use(...fn: (Middleware | Middleware[])[]): NspBuilder;
   use(...fn: (Middleware | Middleware[])[]): NspBuilder {
     const callbacks = flatten(fn);
 
@@ -194,6 +202,8 @@ class NspBuilder {
   link(...fn: NspBuilder[]): NspBuilder;
   link(...fn: (NspBuilder[])[]): NspBuilder;
   link(namespace: string, ...fn: NspBuilder[]): NspBuilder;
+  link(namespace: string, ...fn: (NspBuilder[])[]): NspBuilder;
+  link(name: string | (NspBuilder | NspBuilder[]), ...fn: (NspBuilder | NspBuilder[])[]): NspBuilder;
   link(name: string | (NspBuilder | NspBuilder[]), ...fn: (NspBuilder | NspBuilder[])[]): NspBuilder {
     let offset = 0;
     let namespace = '/';

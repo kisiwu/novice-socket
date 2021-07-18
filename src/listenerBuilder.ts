@@ -7,13 +7,14 @@ import {
   ListenerBuilderJson, 
   ListenerBuilderSettings, 
   Request, 
-  Replier
+  Replier,
+  NextFunc
 } from './definitions';
 
 /**
  * Event builder
  */
-class ListenerBuilder {
+export class ListenerBuilder {
   name: string;
   handlers: Controller[];
   tags: string[];
@@ -61,7 +62,7 @@ class ListenerBuilder {
    * @todo 3rd param as onError callback
    */
   handle(req: Request, emit: Replier): void {
-    let nexts: ((err?: unknown) => void)[]| undefined = [];
+    let nexts: (NextFunc)[]| undefined = [];
     this.handlers
       .map(v => v)
       .reverse()
