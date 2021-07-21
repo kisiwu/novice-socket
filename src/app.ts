@@ -14,7 +14,7 @@ import {
   ListenerBuilderSettings
 } from './definitions';
 
-export class SocketApp {
+export class ServerApp {
   #onConnectionFn: ((socket: Socket, nsp: Namespace, server: Server) => void)[];
   #onDisconnectFn: ((reason: string, socket: Socket, nsp: Namespace, server: Server) => void)[];
   #namespaces: string[];
@@ -60,7 +60,7 @@ export class SocketApp {
     return this.#router;
   }
 
-  private _onConnection(reset: boolean, fn: ((socket: Socket, nsp: Namespace, server: Server) => void)[]): SocketApp {
+  private _onConnection(reset: boolean, fn: ((socket: Socket, nsp: Namespace, server: Server) => void)[]): ServerApp {
     if (reset) {
       this.#onConnectionFn = [];
     }
@@ -68,7 +68,7 @@ export class SocketApp {
     return this;
   }
 
-  private _onDisconnect(reset: boolean, fn: ((reason: string, socket: Socket, nsp: Namespace, server: Server) => void)[]): SocketApp {
+  private _onDisconnect(reset: boolean, fn: ((reason: string, socket: Socket, nsp: Namespace, server: Server) => void)[]): ServerApp {
     if (reset) {
       this.#onDisconnectFn = [];
     }
@@ -79,45 +79,45 @@ export class SocketApp {
   /**
    * @description Add listener (event)
    */
-  add(name: string, ...fn: Controller[]): SocketApp;
-  add(name: ListenerBuilderSettings, ...fn: Controller[]): SocketApp;
-  add(...fn: ListenerBuilder[]): SocketApp;
-  add(...fn: (ListenerBuilder[])[]): SocketApp;
+  add<T, E>(name: string, ...fn: Controller<T, E>[]): ServerApp;
+  add<T, E>(name: ListenerBuilderSettings, ...fn: Controller<T, E>[]): ServerApp;
+  add(...fn: ListenerBuilder[]): ServerApp;
+  add(...fn: (ListenerBuilder[])[]): ServerApp;
   /**
    * @description NspBuilder.addMiddlewares
    */
-  add(...fn: SocketMiddleware[]): SocketApp;
-  add(...fn: (SocketMiddleware[])[]): SocketApp;
+  add(...fn: SocketMiddleware[]): ServerApp;
+  add(...fn: (SocketMiddleware[])[]): ServerApp;
   /**
    * @description NspBuilder.link
    */
-  add(...fn: NspBuilder[]): SocketApp;
-  add(namespace: string, ...fn: NspBuilder[]): SocketApp;
-  add(...fn: (NspBuilder[])[]): SocketApp;
+  add(...fn: NspBuilder[]): ServerApp;
+  add(namespace: string, ...fn: NspBuilder[]): ServerApp;
+  add(...fn: (NspBuilder[])[]): ServerApp;
 
   add(name: string | ListenerBuilderSettings | SocketMiddleware | SocketMiddleware[] | ListenerBuilder | ListenerBuilder[] | NspBuilder | NspBuilder[],
-    ...fn: (Controller | SocketMiddleware | SocketMiddleware[] | ListenerBuilder | ListenerBuilder[] | NspBuilder | NspBuilder[])[]): SocketApp {
+    ...fn: (Controller | SocketMiddleware | SocketMiddleware[] | ListenerBuilder | ListenerBuilder[] | NspBuilder | NspBuilder[])[]): ServerApp {
     this.routing()
       .add(name, ...fn);
     return this;
   }
 
-  use(...fn: Middleware[]): SocketApp;
-  use(fn: Middleware[]): SocketApp;
-  use(...fn: (Middleware | Middleware[])[]): SocketApp {
+  use(...fn: Middleware[]): ServerApp;
+  use(fn: Middleware[]): ServerApp;
+  use(...fn: (Middleware | Middleware[])[]): ServerApp {
     this.routing()
       .use(...fn);
     return this;
   }
 
-  link(...fn: NspBuilder[]): SocketApp;
-  link(...fn: (NspBuilder[])[]): SocketApp;
-  link(namespace: string, ...fn: NspBuilder[]): SocketApp;
-  link(namespace: string, ...fn: (NspBuilder[])[]): SocketApp;
-  link(name: string | (NspBuilder | NspBuilder[]), ...fn: (NspBuilder | NspBuilder[])[]): SocketApp;
-  link(name: string | (NspBuilder | NspBuilder[]), ...fn: (NspBuilder | NspBuilder[])[]): SocketApp {
+  link(...fn: NspBuilder[]): ServerApp;
+  link(...fn: (NspBuilder[])[]): ServerApp;
+  link(namespace: string, ...fn: NspBuilder[]): ServerApp;
+  link(namespace: string, ...fn: (NspBuilder[])[]): ServerApp;
+  link(name: string | (NspBuilder | NspBuilder[]), ...fn: (NspBuilder | NspBuilder[])[]): ServerApp;
+  link(name: string | (NspBuilder | NspBuilder[]), ...fn: (NspBuilder | NspBuilder[])[]): ServerApp {
     if (this.#io) {
-      throw new Error('SocketApp.link() cannot be called after SocketApp.build()')
+      throw new Error('ServerApp.link() cannot be called after ServerApp.build()')
     }
     this.routing()
       .link(name, ...fn);
@@ -172,10 +172,10 @@ export class SocketApp {
     return nsps;
   }
 
-  build(opts?: Partial<ServerOptions> | undefined): SocketApp;
-  build(srv?: number | HttpServer | undefined, opts?: Partial<ServerOptions>): SocketApp;
-  build(srv: number | Partial<ServerOptions> | HttpServer | undefined, opts?: Partial<ServerOptions>): SocketApp;
-  build(srv?: number | Partial<ServerOptions> | HttpServer | undefined, opts?: Partial<ServerOptions>): SocketApp {
+  build(opts?: Partial<ServerOptions> | undefined): ServerApp;
+  build(srv?: number | HttpServer | undefined, opts?: Partial<ServerOptions>): ServerApp;
+  build(srv: number | Partial<ServerOptions> | HttpServer | undefined, opts?: Partial<ServerOptions>): ServerApp;
+  build(srv?: number | Partial<ServerOptions> | HttpServer | undefined, opts?: Partial<ServerOptions>): ServerApp {
     this.destroy();
 
     if (!this.#io) {
@@ -225,7 +225,7 @@ export class SocketApp {
     return this;
   }
 
-  destroy(): SocketApp {
+  destroy(): ServerApp {
     if (this.#io && this.#io._nsps) {
       const server: Server = this.#io;
       // server.disconnectSockets(true); // Added in v4.0.0
@@ -244,11 +244,11 @@ export class SocketApp {
     return this;
   }
 
-  adapter(): SocketApp;
-  adapter(v: typeof Adapter): SocketApp;
-  adapter(v: ((nsp: Namespace) => Adapter)): SocketApp;
-  adapter(v: typeof Adapter | ((nsp: Namespace) => Adapter)): SocketApp;
-  adapter(v?: typeof Adapter | ((nsp: Namespace) => Adapter)): SocketApp {
+  adapter(): ServerApp;
+  adapter(v: typeof Adapter): ServerApp;
+  adapter(v: ((nsp: Namespace) => Adapter)): ServerApp;
+  adapter(v: typeof Adapter | ((nsp: Namespace) => Adapter)): ServerApp;
+  adapter(v?: typeof Adapter | ((nsp: Namespace) => Adapter)): ServerApp {
     if (this.#io) {
       if (!v) {
         this.#io.adapter();
@@ -262,49 +262,49 @@ export class SocketApp {
   /**
    * Closes server connection
    */
-  close(fn?: (err?: Error) => void): SocketApp {
+  close(fn?: (err?: Error) => void): ServerApp {
     if (this.#io) {
       this.#io.close(fn);
     }
     return this;
   }
 
-  onConnection(...fn: ((socket: Socket, nsp: Namespace, server: Server) => void)[]): SocketApp;
-  onConnection(fn: ((socket: Socket, nsp: Namespace, server: Server) => void)[]): SocketApp;
+  onConnection(...fn: ((socket: Socket, nsp: Namespace, server: Server) => void)[]): ServerApp;
+  onConnection(fn: ((socket: Socket, nsp: Namespace, server: Server) => void)[]): ServerApp;
   onConnection(...fn: (
     ((socket: Socket, nsp: Namespace, server: Server) => void)
     | ((socket: Socket, nsp: Namespace, server: Server) => void)[]
-  )[]): SocketApp {
+  )[]): ServerApp {
     const args = toArray<(socket: Socket, nsp: Namespace, server: Server) => void>(flatten(fn), 'function');
     return this._onConnection(true, args);
   }
 
-  addOnConnection(...fn: ((socket: Socket, nsp: Namespace, server: Server) => void)[]): SocketApp;
-  addOnConnection(fn: ((socket: Socket, nsp: Namespace, server: Server) => void)[]): SocketApp;
+  addOnConnection(...fn: ((socket: Socket, nsp: Namespace, server: Server) => void)[]): ServerApp;
+  addOnConnection(fn: ((socket: Socket, nsp: Namespace, server: Server) => void)[]): ServerApp;
   addOnConnection(...fn: (
     ((socket: Socket, nsp: Namespace, server: Server) => void)
     | ((socket: Socket, nsp: Namespace, server: Server) => void)[]
-  )[]): SocketApp {
+  )[]): ServerApp {
     const args = toArray<(socket: Socket, nsp: Namespace, server: Server) => void>(flatten(fn), 'function');
     return this._onConnection(false, args);
   }
 
-  onDisconnect(...fn: ((reason: string, socket: Socket, nsp: Namespace, server: Server) => void)[]): SocketApp;
-  onDisconnect(fn: ((reason: string, socket: Socket, nsp: Namespace, server: Server) => void)[]): SocketApp;
+  onDisconnect(...fn: ((reason: string, socket: Socket, nsp: Namespace, server: Server) => void)[]): ServerApp;
+  onDisconnect(fn: ((reason: string, socket: Socket, nsp: Namespace, server: Server) => void)[]): ServerApp;
   onDisconnect(...fn: (
     ((reason: string, socket: Socket, nsp: Namespace, server: Server) => void)
     | ((reason: string, socket: Socket, nsp: Namespace, server: Server) => void)[]
-  )[]): SocketApp {
+  )[]): ServerApp {
     const args = toArray<(reason: string, socket: Socket, nsp: Namespace, server: Server) => void>(flatten(fn), 'function');
     return this._onDisconnect(true, args);
   }
 
-  addOnDisconnect(...fn: ((reason: string, socket: Socket, nsp: Namespace, server: Server) => void)[]): SocketApp;
-  addOnDisconnect(fn: ((reason: string, socket: Socket, nsp: Namespace, server: Server) => void)[]): SocketApp;
+  addOnDisconnect(...fn: ((reason: string, socket: Socket, nsp: Namespace, server: Server) => void)[]): ServerApp;
+  addOnDisconnect(fn: ((reason: string, socket: Socket, nsp: Namespace, server: Server) => void)[]): ServerApp;
   addOnDisconnect(...fn: (
     ((reason: string, socket: Socket, nsp: Namespace, server: Server) => void)
     | ((reason: string, socket: Socket, nsp: Namespace, server: Server) => void)[]
-  )[]): SocketApp {
+  )[]): ServerApp {
     const args = toArray<(reason: string, socket: Socket, nsp: Namespace, server: Server) => void>(flatten(fn), 'function');
     return this._onDisconnect(false, args);
   }
@@ -318,19 +318,13 @@ export class SocketApp {
   }
 }
 
-function createSocketApp(): SocketApp;
-/**
- * @param namespace Limits application to one namespace.
- */
-function createSocketApp(namespace?: string): SocketApp;
+
 /**
  * @param namespaces Limits application to some namespaces.
  */
-function createSocketApp(namespaces?: string[]): SocketApp;
-function createSocketApp(namespaces?: string | string[]): SocketApp;
-function createSocketApp(namespaces?: string | string[]): SocketApp {
-  return new SocketApp(namespaces);
+function createServerApp(namespaces?: string | string[]): ServerApp {
+  return new ServerApp(namespaces);
 }
 
-export default createSocketApp;
+export default createServerApp;
 

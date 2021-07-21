@@ -1,6 +1,7 @@
 .github
 typedocIncludes
 docs
+localbckp*
 private
 src
 test

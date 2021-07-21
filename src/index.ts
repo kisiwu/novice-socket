@@ -1,7 +1,7 @@
 
-export {SocketApp} from './app'
+export {ServerApp} from './app'
 export {NspBuilder} from './nspBuilder'
-import createSocketApp from './app'
+import createServerApp from './app'
 import errorHandler from './utils/errorHandler'
 import explodeData from './utils/explodeData'
 import toArray from './utils/toArray'
@@ -15,4 +15,4 @@ export const utils = {
   toArray
 };
 
-export default createSocketApp;
+export default createServerApp;

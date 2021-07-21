@@ -20,8 +20,11 @@ export class ListenerBuilder {
   tags: string[];
   description?: string;
 
-  constructor(name: string, ...handlers: Controller[]);
-  constructor(settings: ListenerBuilderSettings, ...handlers: Controller[]);
+  /**
+   * 
+   * @param settings The settings or the name of the event
+   * @param handlers 
+   */
   constructor(settings: ListenerBuilderSettings | string, ...handlers: Controller[]);
   constructor(settings: ListenerBuilderSettings | string, ...handlers: Controller[]) {
     this.name = '';

@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import socketlib, { SocketApp, NspBuilder, utils } from '../../src/index';
+import socketlib, { ServerApp, NspBuilder, utils } from '../../src/index';
 import { expect } from 'chai';
 import http from 'http';
 const { explodeData, errorHandler } = utils;
 
 
 describe('Usage', () => {
-  let nsp: NspBuilder, socketapp: SocketApp, server: http.Server;
+  let nsp: NspBuilder, serverApp: ServerApp, server: http.Server;
   it('should create namespace \'/main\' and add events', function() {
     nsp = new NspBuilder('/main')
       // middlewares
@@ -28,7 +28,7 @@ describe('Usage', () => {
       .add('turn off', (req, res) => {
         res.of('/').emit('turned off', req.data[0]);
       })
-      .add({name: 'turn on', description: 'does something'}, errorHandler(explodeData(function(msg){
+      .add({name: 'turn on', description: 'does something'}, errorHandler(explodeData(function(msg: string | number, other: string | number){
         if(!(typeof msg === 'string' && msg.length > 2)) {
           throw TypeError('The message must be a string of min 3 chars');
         }
@@ -59,7 +59,7 @@ describe('Usage', () => {
 
  
   it('should create app limited to namespace \'/main\'', function() {
-    socketapp = socketlib(['/main'])
+    serverApp = socketlib(['/main'])
       .onConnection((socket, nsp) => {
         // socket.use(fn)
         // socket.join(room[, callback])
@@ -77,114 +77,114 @@ describe('Usage', () => {
       });
 
       //
-      expect(socketapp.getNamespace)
-          .to.be.a('function', 'socketapp.getNamespace is not a function');
+      expect(serverApp.getNamespace)
+          .to.be.a('function', 'serverApp.getNamespace is not a function');
       //
-      expect(socketapp.link)
-          .to.be.a('function', 'socketapp.link is not a function');
+      expect(serverApp.link)
+          .to.be.a('function', 'serverApp.link is not a function');
       //
-      expect(socketapp.destroy)
-          .to.be.a('function', 'socketapp.destroy is not a function');
+      expect(serverApp.destroy)
+          .to.be.a('function', 'serverApp.destroy is not a function');
       //
-      expect(socketapp.build)
-          .to.be.a('function', 'socketapp.build is not a function');
+      expect(serverApp.build)
+          .to.be.a('function', 'serverApp.build is not a function');
       //
-      expect(socketapp.close)
-          .to.be.a('function', 'socketapp.close is not a function');
+      expect(serverApp.close)
+          .to.be.a('function', 'serverApp.close is not a function');
       //
-      expect(socketapp.adapter)
-          .to.be.a('function', 'socketapp.adapter is not a function');
+      expect(serverApp.adapter)
+          .to.be.a('function', 'serverApp.adapter is not a function');
 
-      expect(socketapp.events)
-          .to.be.an('object', 'socketapp.events is not an object')
+      expect(serverApp.events)
+          .to.be.an('object', 'serverApp.events is not an object')
           .that.is.empty;
       
-      expect(socketapp.namespaces)
-          .to.be.an('array', 'socketapp.namespaces is not an array')
+      expect(serverApp.namespaces)
+          .to.be.an('array', 'serverApp.namespaces is not an array')
           .that.is.empty;
         
-      expect(socketapp.currentNamespaces)
-          .to.be.an('array', 'socketapp.currentNamespaces is not an array')
+      expect(serverApp.currentNamespaces)
+          .to.be.an('array', 'serverApp.currentNamespaces is not an array')
           .that.is.empty;
   });
 
   it('should link namespace \'/main\' into app', function() {
-    socketapp.link('/', nsp);
+    serverApp.link('/', nsp);
 
-    expect(socketapp.events)
-          .to.be.an('object', 'socketapp.events is not an object')
+    expect(serverApp.events)
+          .to.be.an('object', 'serverApp.events is not an object')
           .that.has.property('/main')
           .that.is.an('array')
           .that.has.lengthOf(4);
       
-    expect(socketapp.namespaces)
-        .to.be.an('array', 'socketapp.namespaces is not an array')
+    expect(serverApp.namespaces)
+        .to.be.an('array', 'serverApp.namespaces is not an array')
         .to.eql(['/main']);
       
-    expect(socketapp.currentNamespaces)
-        .to.be.an('array', 'socketapp.currentNamespaces is not an array')
+    expect(serverApp.currentNamespaces)
+        .to.be.an('array', 'serverApp.currentNamespaces is not an array')
         .that.is.empty;
   });
 
   it('should link namespace \'/main\' into app (\'add\' method)', function() {
-    socketapp.add('/', new NspBuilder('/main').add('nothing', ()=>{
+    serverApp.add('/', new NspBuilder('/main').add('nothing', ()=>{
       //
     }));
 
-    expect(socketapp.events)
-          .to.be.an('object', 'socketapp.events is not an object')
+    expect(serverApp.events)
+          .to.be.an('object', 'serverApp.events is not an object')
           .that.has.property('/main')
           .that.is.an('array')
           .that.has.lengthOf(5);
       
-    expect(socketapp.namespaces)
-        .to.be.an('array', 'socketapp.namespaces is not an array')
+    expect(serverApp.namespaces)
+        .to.be.an('array', 'serverApp.namespaces is not an array')
         .to.eql(['/main']);
       
-    expect(socketapp.currentNamespaces)
-        .to.be.an('array', 'socketapp.currentNamespaces is not an array')
+    expect(serverApp.currentNamespaces)
+        .to.be.an('array', 'serverApp.currentNamespaces is not an array')
         .that.is.empty;
   });
 
   it('should build app (clients can connect)', function() {
     server = http.createServer();
     const options = {};
-    socketapp.build(server, options);
+    serverApp.build(server, options);
 
-    expect(socketapp.events)
-          .to.be.an('object', 'socketapp.events is not an object')
+    expect(serverApp.events)
+          .to.be.an('object', 'serverApp.events is not an object')
           .that.has.property('/main')
           .that.is.an('array')
           .that.has.lengthOf(5);
 
-    expect(socketapp.namespaces)
-        .to.be.an('array', 'socketapp.namespaces is not an array')
+    expect(serverApp.namespaces)
+        .to.be.an('array', 'serverApp.namespaces is not an array')
         .to.eql(['/main']);
       
-    expect(socketapp.currentNamespaces)
-        .to.be.an('array', 'socketapp.currentNamespaces is not an array')
+    expect(serverApp.currentNamespaces)
+        .to.be.an('array', 'serverApp.currentNamespaces is not an array')
         .to.eql(['/', '/main']);
   });
 
   it('should destroy app (disconnects all clients)', function() {
-    socketapp.destroy();
+    serverApp.destroy();
 
-    expect(socketapp.currentNamespaces)
-        .to.be.an('array', 'socketapp.currentNamespaces is not an array')
+    expect(serverApp.currentNamespaces)
+        .to.be.an('array', 'serverApp.currentNamespaces is not an array')
         .that.is.empty;
   });
 
   it('should build and destroy app again', function() {
-    socketapp.build();
+    serverApp.build();
 
-    expect(socketapp.currentNamespaces)
-        .to.be.an('array', 'socketapp.currentNamespaces is not an array')
+    expect(serverApp.currentNamespaces)
+        .to.be.an('array', 'serverApp.currentNamespaces is not an array')
         .to.eql(['/main']);
 
-    socketapp.destroy();
+    serverApp.destroy();
 
-    expect(socketapp.currentNamespaces)
-        .to.be.an('array', 'socketapp.currentNamespaces is not an array')
+    expect(serverApp.currentNamespaces)
+        .to.be.an('array', 'serverApp.currentNamespaces is not an array')
         .that.is.empty;
   });
 });

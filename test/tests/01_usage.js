@@ -2,7 +2,7 @@ const kaukau = require("kaukau");
 const Logger = kaukau.Logger;
 
 const http = require('http');
-const socketlib = require('../../index');
+const socketlib = require('../../lib/index');
 const { NspBuilder, utils } = socketlib;
 const { explodeData, errorHandler } = utils;
 

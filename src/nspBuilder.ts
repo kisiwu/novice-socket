@@ -1,6 +1,5 @@
 import { flatten } from 'array-flatten';
 import { Namespace, Server, Socket } from 'socket.io';
-import { ExtendedError } from 'socket.io/dist/namespace';
 import ListenerBuilder from './listenerBuilder';
 import {
   Middleware,
@@ -14,8 +13,8 @@ import {
 export class NspBuilder {
   _id: string;
   name: string;
-  middlewares: ((socket: Socket, next: (err?: ExtendedError | undefined) => void) => void)[];
-  socketMiddlewares: ((socket: Socket, event: unknown[], next: (err?: Error | undefined) => void) => void)[];
+  middlewares: Middleware[];
+  socketMiddlewares: SocketMiddleware[];
   events: ListenerBuilder[];
   stack: NspBuilder[];
 
@@ -45,20 +44,28 @@ export class NspBuilder {
   /**
    * @description Add listener (event)
    */
-  add<T = unknown>(name: string, ...fn: Controller<T>[]): NspBuilder;
-  add(name: ListenerBuilderSettings, ...fn: Controller[]): NspBuilder;
+  add<T, E>(name: string | ListenerBuilderSettings, ...fn: Controller<T, E>[]): NspBuilder;
   add(...fn: ListenerBuilder[]): NspBuilder;
   add(...fn: (ListenerBuilder[])[]): NspBuilder;
   /**
    * @description NspBuilder.addMiddlewares
    */
   add(...fn: SocketMiddleware[]): NspBuilder;
+  /**
+   * @description NspBuilder.addMiddlewares
+   */
   add(...fn: (SocketMiddleware[])[]): NspBuilder;
   /**
    * @description NspBuilder.link
    */
-  add(...fn: NspBuilder[]): NspBuilder;
   add(namespace: string, ...fn: NspBuilder[]): NspBuilder;
+  /**
+   * @description NspBuilder.link
+   */
+  add(...fn: NspBuilder[]): NspBuilder;
+  /**
+   * @description NspBuilder.link
+   */
   add(...fn: (NspBuilder[])[]): NspBuilder;
 
   add(name: string | ListenerBuilderSettings | SocketMiddleware | SocketMiddleware[] | ListenerBuilder | ListenerBuilder[] | NspBuilder | NspBuilder[],
@@ -199,10 +206,10 @@ export class NspBuilder {
     return this;
   }
 
-  link(...fn: NspBuilder[]): NspBuilder;
-  link(...fn: (NspBuilder[])[]): NspBuilder;
   link(namespace: string, ...fn: NspBuilder[]): NspBuilder;
   link(namespace: string, ...fn: (NspBuilder[])[]): NspBuilder;
+  link(...fn: NspBuilder[]): NspBuilder;
+  link(...fn: (NspBuilder[])[]): NspBuilder;
   link(name: string | (NspBuilder | NspBuilder[]), ...fn: (NspBuilder | NspBuilder[])[]): NspBuilder;
   link(name: string | (NspBuilder | NspBuilder[]), ...fn: (NspBuilder | NspBuilder[])[]): NspBuilder {
     let offset = 0;

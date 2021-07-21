@@ -6,7 +6,7 @@ import { ExtendedError } from 'socket.io/dist/namespace';
 export type Middleware = ((socket: Socket, next: (err?: ExtendedError | undefined) => void) => void); 
 export type SocketMiddleware = ((socket: Socket, event: unknown[], next: (err?: Error | undefined) => void) => void);
 
-export type NextFunc = ((err?: unknown) => void);
+export type NextFunc<Err = unknown> = ((err?: Err | undefined) => void);
 
 
 export interface ListenerBuilderSettings {
@@ -53,11 +53,11 @@ export interface Replier {
   
 }
 
-export interface Controller<DataTypes = unknown> {
+export interface Controller<DataTypes = unknown, ErrorType = unknown> {
   (
     req: Request<DataTypes>,
     res: Replier,
-    next: NextFunc,
+    next: NextFunc<ErrorType>,
     ...args: unknown[]
   ): void
 }
