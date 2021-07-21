@@ -8,28 +8,31 @@ import {
   ListenerBuilderSettings, 
   Request, 
   Replier,
-  NextFunc
+  NextFunc,
+  ErrorController
 } from './definitions';
 
 /**
  * Event builder
  */
-export class ListenerBuilder {
+export class ListenerBuilder<T = unknown, Err = unknown> {
   name: string;
-  handlers: Controller[];
+  handlers: Controller<T, Err>[];
   tags: string[];
   description?: string;
+
+  #errorController?: ErrorController<Err, T>;
 
   /**
    * 
    * @param settings The settings or the name of the event
    * @param handlers 
    */
-  constructor(settings: ListenerBuilderSettings | string, ...handlers: Controller[]);
-  constructor(settings: ListenerBuilderSettings | string, ...handlers: Controller[]) {
+  constructor(settings: ListenerBuilderSettings | string, ...handlers: Controller<T, Err>[]);
+  constructor(settings: ListenerBuilderSettings | string, ...handlers: Controller<T, Err>[]) {
     this.name = '';
     this.tags = [];
-    this.handlers = toArray<Controller>(
+    this.handlers = toArray<Controller<T, Err>>(
       flatten(handlers),
       'function'
     );
@@ -61,28 +64,51 @@ export class ListenerBuilder {
     }
   }
 
+  private callErrorController(err: Err, req: Request<T>, res: Replier): void {
+    if (this.#errorController) {
+      this.#errorController(err, req, res);
+    }
+  }
+
+  /**
+   * @description Listen to next(error) from Controller
+   */
+  setErrorController(fn: ErrorController<Err, T>): ListenerBuilder<T, Err> {
+    this.#errorController = fn;
+    return this;
+  }
+
+  /**
+   * @description Stop listening to next(error) from Controller
+   */
+  removeErrorController(): ListenerBuilder<T, Err> {
+    this.#errorController = undefined;
+    return this;
+  }
+
   /**
    * @todo 3rd param as onError callback
    */
-  handle(req: Request, emit: Replier): void {
-    let nexts: (NextFunc)[]| undefined = [];
+  handle(req: Request<T>, res: Replier): void {
+    let nexts: (NextFunc<Err>)[]| undefined = [];
     this.handlers
       .map(v => v)
       .reverse()
       .forEach(handle => {
-        let next = () => {
-          //
+        let next = (err?: Err) => {
+          if (err) {
+            this.callErrorController(err, req, res);
+          }
         };
         if (nexts) {
           if (nexts.length) {
             next = nexts[nexts.length - 1];
           }
-          nexts.push((err: unknown) => {
+          nexts.push((err?: Err) => {
             if (err) {
-              // @todo do something
-              return;
+              return this.callErrorController(err, req, res);
             }
-            return handle(req, emit, next);
+            return handle(req, res, next);
           });
         }
       });
@@ -95,15 +121,14 @@ export class ListenerBuilder {
   }
 
   register(socket: Socket, nsp: Namespace, io: Server): void {
-    socket.on(this.name, (...args: unknown[]) => {
-      const req: Request = {
+    socket.on(this.name, (...args: T[]) => {
+      const req: Request<T> = {
         data: args, 
         event: this.toJson(),
         nsp: nsp,
         socket: socket,
         handshake: socket.handshake
       };
-      // @todo: send 3rd param as onError callback
       this.handle(req, createReplier(socket, nsp, io));
     });
   }

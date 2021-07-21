@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import socketlib, { ServerApp, NspBuilder, utils } from '../../src/index';
+import socketlib, { ServerApp, NspBuilder, utils, ListenerBuilder } from '../../src/index';
 import { expect } from 'chai';
 import http from 'http';
 const { explodeData, errorHandler } = utils;
@@ -34,12 +34,25 @@ describe('Usage', () => {
         }
         this.next();
       })),
-      errorHandler(explodeData(function(msg){
+      errorHandler(explodeData(function(msg: string){
         this.res
           .of(this.req.nsp.name) // same as .of()
           .volatile
           .emit('turned on', msg);
       })));
+
+    nsp.add(new ListenerBuilder({ 
+      name: 'full', 
+      description: 'trying full listener',
+      tags: ['Socket API']
+    }, errorHandler(explodeData(function(msg: string, other?: string){
+      this.res
+        .of(this.req.nsp.name) // same as .of()
+        .volatile
+        .emit('turned on', msg);
+    }))).setErrorController((err, req, res) => {
+      //
+    }));
 
     expect(nsp.name)
       .to.be.a('string', 'nsp.name is not a string')
@@ -51,7 +64,7 @@ describe('Usage', () => {
 
     expect(nsp.events)
       .to.be.an('array', 'nsp.events is not an array')
-      .to.have.lengthOf(4);
+      .to.have.lengthOf(5);
     
     expect(nsp.registerEvents)
       .to.be.a('function', 'nsp.registerEvents is not a function');
@@ -115,7 +128,7 @@ describe('Usage', () => {
           .to.be.an('object', 'serverApp.events is not an object')
           .that.has.property('/main')
           .that.is.an('array')
-          .that.has.lengthOf(4);
+          .that.has.lengthOf(5);
       
     expect(serverApp.namespaces)
         .to.be.an('array', 'serverApp.namespaces is not an array')
@@ -135,7 +148,7 @@ describe('Usage', () => {
           .to.be.an('object', 'serverApp.events is not an object')
           .that.has.property('/main')
           .that.is.an('array')
-          .that.has.lengthOf(5);
+          .that.has.lengthOf(6);
       
     expect(serverApp.namespaces)
         .to.be.an('array', 'serverApp.namespaces is not an array')
@@ -155,7 +168,7 @@ describe('Usage', () => {
           .to.be.an('object', 'serverApp.events is not an object')
           .that.has.property('/main')
           .that.is.an('array')
-          .that.has.lengthOf(5);
+          .that.has.lengthOf(6);
 
     expect(serverApp.namespaces)
         .to.be.an('array', 'serverApp.namespaces is not an array')

@@ -1,6 +1,7 @@
 
 export {ServerApp} from './app'
 export {NspBuilder} from './nspBuilder'
+export {ListenerBuilder} from './listenerBuilder'
 import createServerApp from './app'
 import errorHandler from './utils/errorHandler'
 import explodeData from './utils/explodeData'

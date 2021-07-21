@@ -78,57 +78,5 @@ function _createReplier(socket: Socket, nsp: Namespace, io: Server): Replier {
 }
 
 export default function createReplier(socket: Socket, nsp: Namespace, io: Server): Replier {
-  /*
-  var socketReplier = (event, data, dest) => {
-    if (typeof event === "function") {
-      return event(socket, nsp, io);
-    }
-
-    // check name (reserved names)
-    if(reservedEvents.indexOf(event) > -1) {
-      return;
-    }
-
-    if (dest == "broadcast") {
-      socket.broadcast.emit(event, data);
-      return;
-    }
-
-    if (dest == "volatile") {
-      socket.volatile.emit(event, data);
-      return;
-    }
-
-    if (dest == "binary") {
-      socket.binary(true).emit(event, data);
-      return;
-    }
-
-    if (dest == "all") {
-      nsp.emit(event, data);
-      // socket.broadcast.emit(event, data);
-      // socket.emit(event, data);
-      return;
-    }
-
-    if (dest == "self" && socket.room) {
-      socket.emit(event, data);
-      return;
-    }
-
-    if (dest == "in" && socket.room) {
-      nsp.in(socket.room).emit(event, data);
-      return;
-    }
-
-    if (dest == "to" && socket.room) {
-      socket.to(socket.room).emit(event, data);
-      return;
-    }
-
-    // @todo: [custom] emit aimed at other sockets
-  };
-  */
-
   return _createReplier(socket, nsp, io);
 }

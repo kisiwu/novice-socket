@@ -7,4 +7,7 @@ typescript:
   - write src @done
     - src/app.ts @done
   - write test.ts @done
-  - change names of classes (e.g.: SocketApp => ServerApp, etc ...)
+  - change names of classes (e.g.: SocketApp => ServerApp, etc ...) @done
+  - use Map instead of Array in for some class properties (e.g.: function array => function map)
+    - add methods to remove an element from Map
+  - rename Replier => Response

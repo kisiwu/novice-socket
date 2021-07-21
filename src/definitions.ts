@@ -8,7 +8,6 @@ export type SocketMiddleware = ((socket: Socket, event: unknown[], next: (err?: 
 
 export type NextFunc<Err = unknown> = ((err?: Err | undefined) => void);
 
-
 export interface ListenerBuilderSettings {
   name: string;
   description?: string;
@@ -59,5 +58,13 @@ export interface Controller<DataTypes = unknown, ErrorType = unknown> {
     res: Replier,
     next: NextFunc<ErrorType>,
     ...args: unknown[]
+  ): void
+}
+
+export interface ErrorController<Err = unknown, T = unknown> {
+  (
+    err: Err,
+    req: Request<T>,
+    res: Replier
   ): void
 }

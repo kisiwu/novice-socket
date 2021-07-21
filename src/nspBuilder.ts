@@ -11,20 +11,21 @@ import {
 
 
 export class NspBuilder {
-  _id: string;
-  name: string;
-  middlewares: Middleware[];
-  socketMiddlewares: SocketMiddleware[];
-  events: ListenerBuilder[];
-  stack: NspBuilder[];
+  #_id: string;
+  #name: string;
+  
+  #middlewares: Middleware[];
+  #socketMiddlewares: SocketMiddleware[];
+  #events: ListenerBuilder[];
+  #stack: NspBuilder[];
 
   constructor(name = '/') {
-    this._id = Date.now() + '_' + ((Math.random() * 1000000) + 1000001)
-    this.name = '/';
-    this.middlewares = [];
-    this.socketMiddlewares = [];
-    this.events = [];
-    this.stack = [];
+    this.#_id = Date.now() + '_' + ((Math.random() * 1000000) + 1000001)
+    this.#name = '/';
+    this.#middlewares = [];
+    this.#socketMiddlewares = [];
+    this.#events = [];
+    this.#stack = [];
 
     if (name) {
       if (typeof name !== 'string') {
@@ -37,8 +38,28 @@ export class NspBuilder {
           '\'NspBuilder\' first argument should be a string starting with \'/\''
         );
       }
-      this.name = name;
+      this.#name = name;
     }
+  }
+
+  get id(): string {
+    return this.#_id
+  }
+
+  get name(): string {
+    return this.#name
+  }
+
+  get events(): ListenerBuilder[] {
+    return this.#events;
+  }
+
+  get middlewares(): Middleware[] {
+    return this.#middlewares;
+  }
+
+  get socketMiddlewares(): SocketMiddleware[] {
+    return this.#socketMiddlewares;
   }
 
   /**
@@ -128,7 +149,7 @@ export class NspBuilder {
     }
     // if some ListenerBuilder
     if (listenerBuilders.length) {
-      let newEvents = this.events.concat(listenerBuilders);
+      let newEvents = this.#events.concat(listenerBuilders);
 
       // remove duplicate events (by name)
       newEvents = newEvents
@@ -149,7 +170,7 @@ export class NspBuilder {
           return sort;
         });
 
-      this.events = newEvents;
+      this.#events = newEvents;
     }
 
     return this;
@@ -174,7 +195,7 @@ export class NspBuilder {
         throw new TypeError('NspBuilder.addMiddlewares() requires a function but got a ' + (typeof fn))
       }
 
-      this.socketMiddlewares.push(fn);
+      this.#socketMiddlewares.push(fn);
     }
 
     return this;
@@ -200,7 +221,7 @@ export class NspBuilder {
         throw new TypeError('NspBuilder.use() requires a function but got a ' + (typeof fn))
       }
 
-      this.middlewares.push(fn);
+      this.#middlewares.push(fn);
     }
 
     return this;
@@ -237,18 +258,18 @@ export class NspBuilder {
         throw new TypeError('NspBuilder.link() requires a NspBuilderC but got a ' + (typeof fn))
       }
 
-      if (fn._id === this._id) {
+      if (fn.id === this.id) {
         throw new ReferenceError('NspBuilder.link() shouldn\'t receive itself')
       }
 
       if (!offset) {
-        this.stack.push(fn);
+        this.#stack.push(fn);
       }
     }
 
     if (offset) {
       const router = new NspBuilder(namespace);
-      this.stack.push(router.link(callbacks));
+      this.#stack.push(router.link(callbacks));
     }
 
     return this;
@@ -256,18 +277,18 @@ export class NspBuilder {
 
   registerMiddlewares(namespace: string, nsp: Namespace, io: Server): void {
     if (namespace == this.name) {
-      this.middlewares.forEach(
+      this.#middlewares.forEach(
         middleware => {
           nsp.use(middleware);
         }
       );
     }
-    if (this.stack.length && namespace.startsWith(this.name)) {
+    if (this.#stack.length && namespace.startsWith(this.name)) {
       let subpath = namespace.substring(this.name.length);
       if (!subpath.startsWith('/')) {
         subpath = '/' + subpath;
       }
-      this.stack.forEach(
+      this.#stack.forEach(
         router => router.registerMiddlewares(subpath, nsp, io)
       );
     }
@@ -275,24 +296,24 @@ export class NspBuilder {
 
   registerEvents(namespace: string, socket: Socket, nsp: Namespace, io: Server): void {
     if (namespace == this.name) {
-      this.socketMiddlewares.forEach(
+      this.#socketMiddlewares.forEach(
         middleware => {
           socket.use((packet, next) => {
             middleware(socket, packet, next)
           });
         }
       );
-      this.events.forEach(event => {
+      this.#events.forEach(event => {
         event.register(socket, nsp, io);
       });
     }
 
-    if (this.stack.length && namespace.startsWith(this.name)) {
+    if (this.#stack.length && namespace.startsWith(this.name)) {
       let subpath = namespace.substring(this.name.length);
       if (!subpath.startsWith('/')) {
         subpath = '/' + subpath;
       }
-      this.stack.forEach(
+      this.#stack.forEach(
         router => router.registerEvents(subpath, socket, nsp, io)
       );
     }
@@ -321,7 +342,7 @@ export class NspBuilder {
       v.push(namespace);
     }
 
-    this.stack.forEach(
+    this.#stack.forEach(
       router => {
         flatten(router.getPaths(namespace)).forEach(
           p => {
@@ -347,9 +368,9 @@ export class NspBuilder {
       }
     }
 
-    v[namespace] = this.events.map(ev => ev.toJson());
+    v[namespace] = this.#events.map(ev => ev.toJson());
 
-    this.stack.forEach(
+    this.#stack.forEach(
       router => {
         const sub = router.getEvents(namespace);
         Object.keys(sub).forEach(
