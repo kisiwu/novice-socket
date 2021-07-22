@@ -1,11 +1,11 @@
-- typescript:
-  - res.of().emit('chat message', msg); // from current namespace @done
-  - check util errorHandler (see if it could call "next") @done
-  - readme
-  - use Map instead of Array in for some class properties (e.g.: function array => function map)
-    - add methods to remove an element from Map
+- use Map instead of Array in for some class properties (e.g.: function array => function map)
+  - add methods to remove an element from Map
 
 Archive:
+- typescript: @done
+  - res.of().emit('chat message', msg); // from current namespace @done
+  - check util errorHandler (see if it could call "next") @done
+  - readme @done
   - upgrade package to newest version of "socket.io" @done
   - update kaukau @done
   - adapt code @done

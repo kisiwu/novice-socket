@@ -19,6 +19,10 @@ export class NspBuilder {
   #events: ListenerBuilder[];
   #stack: NspBuilder[];
 
+  /**
+   * 
+   * @param name Default: '/'
+   */
   constructor(name = '/') {
     this.#_id = Date.now() + '_' + ((Math.random() * 1000000) + 1000001)
     this.#name = '/';

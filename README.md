@@ -16,6 +16,7 @@ $ npm install @novice1/socket
 const { NspBuilder, default: socketlib } = require('@novice1/socket');
 const http = require('http').createServer();
 
+// create namespace and add events to it
 let defaultNamespace = new NspBuilder() 
   .add('chat message', function(req, res, next) {
     let msg = req.data[0];
@@ -26,6 +27,7 @@ let defaultNamespace = new NspBuilder()
     console.log('user disconnecting');
   });
 
+// create application
 let socketApp = socketlib()
   .onConnection((socket, nsp) => {
     // socket.use(fn)
@@ -44,10 +46,12 @@ let socketApp = socketlib()
   .onDisconnect((reason, socket, nsp) => {
     console.log('user disconnected');
   })
-  .link(defaultNamespace); // link namespace's events to the application
+  .link(defaultNamespace); // link namespace to the application
 
-socketApp.build(http); // build the application
+// build the application
+socketApp.build(http); 
 
+// start server
 http.listen(3000, function(){
   console.log('listening on *:3000');
 });
@@ -102,15 +106,15 @@ appNamespace.add({
 It is an object with the following properties:
 
 - **data** : Array of data sent through the event
-- **event** : the event's description (*name, etc ...*)
-- **nsp** : [namespace](https://socket.io/docs/v4/server-api/#Namespace)
-- **socket** : [socket](https://socket.io/docs/v4/server-api/#Socket)
-- **handshake** : [*socket.handshake*](https://socket.io/docs/v4/server-api/#socket-handshake)
+- **event** : the event's details (*name, description, tags*)
+- **nsp** : [Namespace](https://socket.io/docs/v4/server-api/#Namespace)
+- **socket** : [Socket](https://socket.io/docs/v4/server-api/#Socket)
+- **handshake** : [*Socket.handshake*](https://socket.io/docs/v4/server-api/#socket-handshake)
 
 
 ##### <a id="responseobject"></a> response object
 
-Can be used to emit an event from the socket or from a namespace
+Can be used to emit an event from a socket, a room or a namespace
 
 Example
 
@@ -121,7 +125,7 @@ new NspBuilder('/app')
   .add('respond from socket', function one(req, res, next) {
     let msg = req.data[0];
 
-    // examples
+    // examples from socket and room
     res.emit('chat message', msg);
     res.volatile.emit('chat message', msg);
     res.broadcast.emit('chat message', msg);
@@ -133,7 +137,7 @@ new NspBuilder('/app')
   .add('respond from namespace', function(req, res) {
     let msg = req.data[0];
 
-    // examples
+    // examples from namespaces and room
     res.of().emit('chat message', msg); // from current namespace
     res.of('/chat').emit('chat message', msg); // from '/chat' namespace
     res.of().volatile.emit('chat message', msg);
@@ -145,7 +149,7 @@ new NspBuilder('/app')
 
 #### Add events with ListenerBuilder
 
-The advantage with ListenerBuilder is that you can define the callback to be called (ErrorController) when you send an argument to the "next" callback.
+The advantage with ListenerBuilder is that you can define the callback (ErrorController) to be called when you execute the "next" callback with an argument that evaluates to `true`. 
 
 Example
 
@@ -159,12 +163,12 @@ let listenerBuilder = new ListenerBuilder(
         // not ok, call ErrorController
         next(new Error('missing message'));
       } else {
-        // ok
+        // ok, defer
         next();
       }
     },
     (req, res) => {
-      // ok
+      // done
     }
   ).setErrorController((err, req, res) => {
     // not ok, do something
@@ -213,7 +217,7 @@ See [socket.use(fn)](https://socket.io/docs/v4/server-api/#socket-use-fn)
 
 #### Link namespaces
 
-A namespace can be link to another namespace. That way the name of the one being linked will be the concatenation of the namespace linking it and its own. The first argument can also be another string to use in the concatenation.
+A namespace can be linked to another namespace. That way the name of the one being linked will be the concatenation of the namespace linking it and its own. The first argument can also be another string to use in the concatenation.
 
 Example
 
@@ -241,7 +245,7 @@ http.listen(3000, function(){
 
 #### Settings
 
-When setting the application you link the namespaces settings that will be used to build the `socket.io` server.
+When setting the application, you link the namespaces that will be used to build the `socket.io` server.
 You can also limit the namespaces used to build the server.
 
 Example
@@ -265,7 +269,8 @@ socketlib(['/main']) // limit to '/main'
 
 #### Build
 
-It will build the `socket.io` server from the settings and a `http` server.
+It will build the `socket.io` server from a `http` server.
+The settings (namespaces, etc ...) need to be set before the build.
 
 ```js
 const { NspBuilder, default: socketlib } = require('@novice1/socket');
@@ -344,6 +349,11 @@ http.listen(3000, function(){
   // connection possible again
 });
 ```
+
+#### Close
+
+Closes the Socket.IO server and the underlying HTTP server.
+
 
 ## NspBuilder methods
 
