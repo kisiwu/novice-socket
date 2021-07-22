@@ -1,16 +1,14 @@
-const kaukau = require("kaukau");
-const Logger = kaukau.Logger;
+const kaukau = require('kaukau');
 
 const http = require('http');
-const socketlib = require('../../lib/index');
-const { NspBuilder, utils } = socketlib;
+const { NspBuilder, utils, default: socketlib } = require('../../lib/index');
 const { explodeData, errorHandler } = utils;
 
 
-describe("Usage", () => {
+describe('Usage', () => {
   var nsp, socketapp, server;
-  it("should create namespace '/main' and add events", function() {
-    nsp = NspBuilder('/main')
+  it('should create namespace \'/main\' and add events', function() {
+    nsp = new NspBuilder('/main')
       // middlewares
       .use((socket, next) => {
         if (socket.request.headers.cookie) {
@@ -40,8 +38,8 @@ describe("Usage", () => {
           .emit('turned on', msg);
       })));
 
-    expect(nsp.namespace)
-      .to.be.a('string', 'nsp.namespace is not a string')
+    expect(nsp.name)
+      .to.be.a('string', 'nsp.name is not a string')
       .to.equal('/main');
 
     expect(nsp.middlewares)
@@ -57,7 +55,7 @@ describe("Usage", () => {
   });
 
  
-  it("should create app limited to namespace '/main'", function() {
+  it('should create app limited to namespace \'/main\'', function() {
     socketapp = socketlib(['/main'])
       .onConnection((socket, nsp) => {
         // socket.use(fn)
@@ -76,7 +74,6 @@ describe("Usage", () => {
 
       [
         'adapter',
-        'origins',
         'close',
         'build',
         'destroy',
@@ -88,7 +85,7 @@ describe("Usage", () => {
       });
 
       expect(socketapp.events)
-          .to.be.an('object', `socketapp.events is not an object`)
+          .to.be.an('object', 'socketapp.events is not an object')
           .that.is.empty;
       
       expect(socketapp.namespaces)
@@ -100,11 +97,11 @@ describe("Usage", () => {
           .that.is.empty;
   });
 
-  it("should link namespace '/main' into app", function() {
+  it('should link namespace \'/main\' into app', function() {
     socketapp.link('/', nsp);
 
     expect(socketapp.events)
-          .to.be.an('object', `socketapp.events is not an object`)
+          .to.be.an('object', 'socketapp.events is not an object')
           .that.has.property('/main')
           .that.is.an('array')
           .that.has.lengthOf(4);
@@ -118,11 +115,11 @@ describe("Usage", () => {
         .that.is.empty;
   });
 
-  it("should link namespace '/main' into app ('add' method)", function() {
-    socketapp.add('/', NspBuilder('/main').add('nothing', ()=>{}));
+  it('should link namespace \'/main\' into app (\'add\' method)', function() {
+    socketapp.add('/', new NspBuilder('/main').add('nothing', ()=>{}));
 
     expect(socketapp.events)
-          .to.be.an('object', `socketapp.events is not an object`)
+          .to.be.an('object', 'socketapp.events is not an object')
           .that.has.property('/main')
           .that.is.an('array')
           .that.has.lengthOf(5);
@@ -136,13 +133,13 @@ describe("Usage", () => {
         .that.is.empty;
   });
 
-  it("should build app (clients can connect)", function() {
+  it('should build app (clients can connect)', function() {
     server = http.createServer();
     var options = {};
     socketapp.build(server, options);
 
     expect(socketapp.events)
-          .to.be.an('object', `socketapp.events is not an object`)
+          .to.be.an('object', 'socketapp.events is not an object')
           .that.has.property('/main')
           .that.is.an('array')
           .that.has.lengthOf(5);
@@ -156,7 +153,7 @@ describe("Usage", () => {
         .to.eql(['/', '/main']);
   });
 
-  it("should destroy app (disconnects all clients)", function() {
+  it('should destroy app (disconnects all clients)', function() {
     socketapp.destroy();
 
     expect(socketapp.currentNamespaces)
@@ -164,7 +161,7 @@ describe("Usage", () => {
         .that.is.empty;
   });
 
-  it("should build and destroy app again", function() {
+  it('should build and destroy app again', function() {
     socketapp.build();
 
     expect(socketapp.currentNamespaces)

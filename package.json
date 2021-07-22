@@ -1,7 +1,7 @@
 {
   "name": "@novice1/socket",
   "private": false,
-  "version": "0.1.5",
+  "version": "0.2.0",
   "description": "",
   "main": "lib/index.js",
   "repository": {
@@ -12,8 +12,8 @@
     "doc": "typedoc",
     "build": "tsc",
     "lint": "eslint src/**/*.ts",
-    "testlib": "kaukau --config kaukau-config.json",
-    "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\", \"noUnusedParameters\": false}' kaukau --require ts-node/register --file test --ext .test.ts"
+    "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\", \"noUnusedParameters\": false}' kaukau --require ts-node/register --config kaukau-config-src.json",
+    "testlib": "kaukau --config kaukau-config-lib.json"
   },
   "author": "demingongo",
   "license": "MIT",

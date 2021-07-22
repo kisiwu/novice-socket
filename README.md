@@ -13,7 +13,7 @@ $ npm install @novice1/socket
 ### Basically
 
 ```js
-const socketlib, { NspBuilder } = require('@novice1/socket');
+const { NspBuilder, default: socketlib } = require('@novice1/socket');
 const http = require('http').createServer();
 
 let defaultNamespace = new NspBuilder() 
@@ -218,7 +218,7 @@ A namespace can be link to another namespace. That way the name of the one being
 Example
 
 ```js
-const socketlib, { NspBuilder } = require('@novice1/socket');
+const { NspBuilder, default: socketlib } = require('@novice1/socket');
 const http = require('http').createServer();
 
 let main = new NspBuilder('/main');
@@ -247,7 +247,7 @@ You can also limit the namespaces used to build the server.
 Example
 
 ```js
-const socketlib, { NspBuilder } = require('@novice1/socket');
+const { NspBuilder, default: socketlib } = require('@novice1/socket');
 
 let appNsp = new NspBuilder('/app');
 let otherNsp = new NspBuilder();
@@ -268,7 +268,7 @@ socketlib(['/main']) // limit to '/main'
 It will build the `socket.io` server from the settings and a `http` server.
 
 ```js
-const socketlib, { NspBuilder } = require('@novice1/socket');
+const { NspBuilder, default: socketlib } = require('@novice1/socket');
 const http = require('http').createServer();
 
 let appNsp = new NspBuilder('/app');
@@ -287,7 +287,7 @@ http.listen(3000, function(){
 Get a description of events listened by namespaces with the property `events`.
 
 ```js
-const socketlib = require('@novice1/socket');
+const { default: socketlib } = require('@novice1/socket');
 
 let app = socketlib();
 
@@ -303,7 +303,7 @@ Get an array of the active namespaces (= created on the server) with the propert
 You can also get one [namespace](https://socket.io/docs/v4/server-api/#Namespace) with the method `getNamespace`.
 
 ```js
-const socketlib = require('@novice1/socket');
+const { default: socketlib } = require('@novice1/socket');
 const http = require('http').createServer();
 
 let app = socketlib();
@@ -325,7 +325,7 @@ You can disconnect all clients and stop handling future connections by executing
 To rebuild the application you can call the method `build` with no arguments.
 
 ```js
-const socketlib = require('@novice1/socket');
+const { default: socketlib } = require('@novice1/socket');
 const http = require('http').createServer();
 
 let app = socketlib();

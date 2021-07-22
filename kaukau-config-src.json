@@ -1,7 +1,8 @@
 {
 	"enableLogs": false,
 	"exitOnFail": true,
-	"files": "test/tests",
+	"files": "test/src",
+	"ext": ".test.ts",
 	"options": {
 		"bail": false,
 		"fullTrace": true,

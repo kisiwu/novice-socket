@@ -8,6 +8,7 @@ test
 types
 todo
 typedoc.json
+kaukau-config*.json
 
 # Logs
 logs

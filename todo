@@ -1,6 +1,6 @@
 - typescript:
   - res.of().emit('chat message', msg); // from current namespace @done
-  - check util errorHandler (see if it could call "next")
+  - check util errorHandler (see if it could call "next") @done
   - readme
   - use Map instead of Array in for some class properties (e.g.: function array => function map)
     - add methods to remove an element from Map
