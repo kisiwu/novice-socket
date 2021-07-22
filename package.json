@@ -4,6 +4,7 @@
   "version": "0.2.0",
   "description": "",
   "main": "lib/index.js",
+  "homepage": "https://novice1.000webhostapp.com/socket/",
   "repository": {
     "type": "git",
     "url": "https://github.com/kisiwu/novice-socket.git"
