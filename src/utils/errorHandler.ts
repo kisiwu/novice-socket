@@ -12,6 +12,7 @@ function errorHandler<DataType, ErrorType>(fn: Controller<DataType, ErrorType>, 
           message: err.message
         };
       }
+      //next(e);
       res(errorEvent || ('error:' + req.event.name), e);
     }
   };

@@ -136,13 +136,44 @@ new NspBuilder('/app')
     // examples
     res.of().emit('chat message', msg); // from current namespace
     res.of('/chat').emit('chat message', msg); // from '/chat' namespace
-    res.of('/', '/app', '/chat').emit('chat message', msg); // from '/', '/app' and '/chat' namespaces
     res.of().volatile.emit('chat message', msg);
     res.of().local.emit('chat message', msg);
     res.of().in('room1').emit('chat message', msg);
     res.of().to('room1').emit('chat message', msg);
   });
 ```
+
+#### Add events with ListenerBuilder
+
+The advantage with ListenerBuilder is that you can define the callback to be called (ErrorController) when you send an argument to the "next" callback.
+
+Example
+
+```js
+const { NspBuilder, ListenerBuilder } = require('@novice1/socket');
+
+let listenerBuilder = new ListenerBuilder(
+    'eventName',
+    (req, res, next) => {
+      if (req.data[0]) {
+        // not ok, call ErrorController
+        next(new Error('missing message'));
+      } else {
+        // ok
+        next();
+      }
+    },
+    (req, res) => {
+      // ok
+    }
+  ).setErrorController((err, req, res) => {
+    // not ok, do something
+  });
+
+new NspBuilder('/app')
+  .add(listenerBuilder);
+```
+
 
 #### Register a middleware to a namespace
 
@@ -160,7 +191,7 @@ new NspBuilder()
   })
 ```
 
-See [namespace.use(fn)](https://socket.io/docs/server-api/#namespace-use-fn)
+See [namespace.use(fn)](https://socket.io/docs/v4/server-api/#namespace-use-fn)
 
 #### Register a middleware to sockets
 
@@ -178,7 +209,7 @@ new NspBuilder()
   })
 ```
 
-See [socket.use(fn)](https://socket.io/docs/server-api/#socket-use-fn)
+See [socket.use(fn)](https://socket.io/docs/v4/server-api/#socket-use-fn)
 
 #### Link namespaces
 
@@ -269,7 +300,7 @@ console.log(app.events['/']);
 #### Active namespaces
 
 Get an array of the active namespaces (= created on the server) with the property `activeNamespaces`.
-You can also get one [namespace](https://socket.io/docs/server-api/#Namespace) with the method `getNamespace`.
+You can also get one [namespace](https://socket.io/docs/v4/server-api/#Namespace) with the method `getNamespace`.
 
 ```js
 const socketlib = require('@novice1/socket');
@@ -329,13 +360,14 @@ http.listen(3000, function(){
 
 ## Application methods
 
-- [**adapter**](https://socket.io/docs/server-api/#server-adapter-value)
+- [**adapter**](https://socket.io/docs/v4/server-api/#server-adapter-value)
 - **add(...fn) : this**
 - **add(string, ...fn) : this**
 - **add(object, ...fn) : this**
 - **add(...NspBuilder) : this** (_alias for "link" method_)
 - **add(string, ...NspBuilder) : this** (_alias for "link"method_)
-- **build([http.Server]) : this**
+- **build([http.Server|options]) : this**
+- **build(port|http.Server[, options]) : this**
 - [**close**](https://socket.io/docs/v4/server-api/#server-close-callback)
 - **destroy() : this**
 - **getNamespace(string) : [Namespace](https://socket.io/docs/v4/server-api/#Namespace)**

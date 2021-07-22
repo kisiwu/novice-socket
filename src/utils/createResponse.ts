@@ -1,5 +1,4 @@
 import { Namespace, Socket, Server } from 'socket.io';
-import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 import { Response } from '../definitions';
 
 
@@ -7,12 +6,12 @@ function createResponse(socket: Socket, nsp: Namespace, io: Server): Response {
 
   const response: Response = ( () => {
     const _response: Partial<Response> = function (
-    event: string | ((socket: Socket, nsp: Namespace, io: Server) => void), 
+      eventName: string | ((socket: Socket, nsp: Namespace, io: Server) => void), 
     ...args: unknown[]) {
-      if (typeof event === 'function') {
-        return event(socket, nsp, io);
+      if (typeof eventName === 'function') {
+        return eventName(socket, nsp, io);
       }
-      socket.emit(event, ...args);
+      socket.emit(eventName, ...args);
     }
 
     _response.emit = _response as Response;
@@ -62,13 +61,17 @@ function createResponse(socket: Socket, nsp: Namespace, io: Server): Response {
     });
 
     _response.of = function(
-      name: string | RegExp | ((
+      name?: string | RegExp | ((
         name: string,
         query: { [key: string]: unknown },
         next: (err: Error | null, success: boolean) => void
       ) => void), 
-      fn?: ((socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap>) => void)): Namespace<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap> {
-      return io.of(name, fn);
+      fn?: ((socket: Socket) => void)): Namespace {
+      let r = nsp; 
+      if (name) {
+        r = io.of(name, fn);
+      }
+      return r;
     };
 
     return _response as Response;

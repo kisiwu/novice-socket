@@ -1,5 +1,5 @@
 import { BroadcastOperator, Namespace, Socket, Server } from 'socket.io'
-import { DefaultEventsMap } from 'socket.io/dist/typed-events';
+import { DefaultEventsMap, EventsMap } from 'socket.io/dist/typed-events';
 import { Handshake } from 'socket.io/dist/socket'
 import { ExtendedError } from 'socket.io/dist/namespace';
 
@@ -26,29 +26,32 @@ export interface Request<DataType = unknown> {
   handshake: Handshake
 }
 
-export interface Response {
+/**
+ * Especially typed with parameters because of "BroadcastOperator"
+ */
+export interface Response<ListenEvents extends EventsMap = DefaultEventsMap, EmitEvents extends EventsMap = ListenEvents, ServerSideEvents extends EventsMap = DefaultEventsMap> {
   (
-    event: string | ((socket: Socket, nsp: Namespace, io: Server) => void), 
+    eventName: string | ((socket: Socket<ListenEvents, EmitEvents, ServerSideEvents>, nsp: Namespace<ListenEvents, EmitEvents, ServerSideEvents>, io: Server<ListenEvents, EmitEvents, ServerSideEvents>) => void), 
     ...args: unknown[]): void;
     
-  emit: Response;
+  emit: Response<ListenEvents, EmitEvents, ServerSideEvents>;
 
-  except: (room: string | string[]) => BroadcastOperator<DefaultEventsMap>;
-  in: (room: string | string[]) => BroadcastOperator<DefaultEventsMap>;
-  to: (room: string | string[]) => BroadcastOperator<DefaultEventsMap>;
+  except: (room: string | string[]) => BroadcastOperator<EmitEvents>;
+  in: (room: string | string[]) => BroadcastOperator<EmitEvents>;
+  to: (room: string | string[]) => BroadcastOperator<EmitEvents>;
 
-  broadcast: BroadcastOperator<DefaultEventsMap>;
-  volatile: Response;
-  compressed: Response;
-  notCompressed: Response,
+  broadcast: BroadcastOperator<EmitEvents>;
+  volatile: Response<ListenEvents, EmitEvents, ServerSideEvents>;
+  compressed: Response<ListenEvents, EmitEvents, ServerSideEvents>;
+  notCompressed: Response<ListenEvents, EmitEvents, ServerSideEvents>,
   
   of: (
-    name: string | RegExp | ((
+    name?: string | RegExp | ((
       name: string,
       query: { [key: string]: unknown },
       next: (err: Error | null, success: boolean) => void
     ) => void), 
-    fn?: ((socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap>) => void)) => Namespace<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap>;
+    fn?: ((socket: Socket<ListenEvents, EmitEvents, ServerSideEvents>) => void)) => Namespace<ListenEvents, EmitEvents, ServerSideEvents>;
   
 }
 

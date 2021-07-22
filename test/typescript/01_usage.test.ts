@@ -47,11 +47,13 @@ describe('Usage', () => {
       tags: ['Socket API']
     }, errorHandler(explodeData(function(msg: string, other?: string){
       this.res
-        .of(this.req.nsp.name) // same as .of()
+        .of()
         .volatile
-        .emit('turned on', msg);
+        .emit('full', msg);
     }))).setErrorController((err, req, res) => {
-      //
+      res('full error', req.data[0], (data: unknown) => {
+        console.log('ack:', data)
+      });
     }));
 
     expect(nsp.name)
