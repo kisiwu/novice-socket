@@ -13,13 +13,12 @@ $ npm install @novice1/socket
 ### Basically
 
 ```js
-const socketlib = require('@novice1/socket');
+const socketlib, { NspBuilder } = require('@novice1/socket');
 const http = require('http').createServer();
-const { NspBuilder } = socketlib;
 
-var defaultNamespace = NspBuilder() 
+let defaultNamespace = new NspBuilder() 
   .add('chat message', function(req, res, next) {
-    var msg = req.data[0];
+    let msg = req.data[0];
     console.log('message: ' + msg);
     res.of().emit('chat message', msg);
   })
@@ -27,7 +26,7 @@ var defaultNamespace = NspBuilder()
     console.log('user disconnecting');
   });
 
-var socketApp = socketlib()
+let socketApp = socketlib()
   .onConnection((socket, nsp) => {
     // socket.use(fn)
     // socket.join(room[, callback])
@@ -61,12 +60,11 @@ http.listen(3000, function(){
 When setting a namespace you can define the name otherwise it will be '/' by default
 
 ```js
-const socketlib = require('@novice1/socket');
-const { NspBuilder } = socketlib;
+const { NspBuilder } = require('@novice1/socket');
 
-var defaultNamespace = NspBuilder(); // same as NspBuilder('/')
+let defaultNamespace = new NspBuilder(); // same as new NspBuilder('/')
 
-var appNamespace = NspBuilder('/app');
+let appNamespace = new NspBuilder('/app');
 ```
 
 #### Add events
@@ -79,10 +77,9 @@ Each function receives three parameters:
 - a callback to optionally defer execution to the next function
 
 ```js
-const socketlib = require('@novice1/socket');
-const { NspBuilder } = socketlib;
+const { NspBuilder } = require('@novice1/socket');
 
-var appNamespace = NspBuilder('/app')
+let appNamespace = new NspBuilder('/app')
   .add('my event', function one(req, res, next) {
     // do something
     next(); // defer execution to the next function ('two')
@@ -106,9 +103,9 @@ It is an object with the following properties:
 
 - **data** : Array of data sent through the event
 - **event** : the event's description (*name, etc ...*)
-- **nsp** : [namespace](https://socket.io/docs/server-api/#Namespace)
-- **socket** : [socket](https://socket.io/docs/server-api/#Socket)
-- **handshake** : *socket.handshake*
+- **nsp** : [namespace](https://socket.io/docs/v4/server-api/#Namespace)
+- **socket** : [socket](https://socket.io/docs/v4/server-api/#Socket)
+- **handshake** : [*socket.handshake*](https://socket.io/docs/v4/server-api/#socket-handshake)
 
 
 ##### <a id="responseobject"></a> response object
@@ -118,18 +115,14 @@ Can be used to emit an event from the socket or from a namespace
 Example
 
 ```js
-const socketlib = require('@novice1/socket');
-const { NspBuilder } = socketlib;
+const { NspBuilder } = require('@novice1/socket');
 
-NspBuilder('/app')
+new NspBuilder('/app')
   .add('respond from socket', function one(req, res, next) {
-    var msg = req.data[0];
+    let msg = req.data[0];
 
     // examples
     res.emit('chat message', msg);
-    res.binary.emit('chat message', msg);
-    res.notBinary.emit('chat message', msg);
-    res.notBinary.emit('chat message', msg);
     res.volatile.emit('chat message', msg);
     res.broadcast.emit('chat message', msg);
     res.compressed.emit('chat message', msg);
@@ -138,15 +131,12 @@ NspBuilder('/app')
     res.to('room1').emit('chat message', msg);
   })
   .add('respond from namespace', function(req, res) {
-    var msg = req.data[0];
+    let msg = req.data[0];
 
     // examples
     res.of().emit('chat message', msg); // from current namespace
     res.of('/chat').emit('chat message', msg); // from '/chat' namespace
     res.of('/', '/app', '/chat').emit('chat message', msg); // from '/', '/app' and '/chat' namespaces
-    res.of().binary.emit('chat message', msg);
-    res.of().notBinary.emit('chat message', msg);
-    res.of().notBinary.emit('chat message', msg);
     res.of().volatile.emit('chat message', msg);
     res.of().local.emit('chat message', msg);
     res.of().in('room1').emit('chat message', msg);
@@ -159,10 +149,9 @@ NspBuilder('/app')
 Example
 
 ```js
-const socketlib = require('@novice1/socket');
-const { NspBuilder } = socketlib;
+const { NspBuilder } = require('@novice1/socket');
 
-NspBuilder() 
+new NspBuilder() 
   .use((socket, next) => {
     if (socket.request.headers.cookie) {
       return next();
@@ -180,10 +169,9 @@ Register a middleware to all sockets of a namespace.
 Example
 
 ```js
-const socketlib = require('@novice1/socket');
-const { NspBuilder } = socketlib;
+const { NspBuilder } = require('@novice1/socket');
 
-NspBuilder() 
+new NspBuilder() 
   .add((socket, packet, next) => {
     if (packet.doge === true) return next();
     next(new Error('Not a doge error'));
@@ -199,13 +187,12 @@ A namespace can be link to another namespace. That way the name of the one being
 Example
 
 ```js
-const socketlib = require('@novice1/socket');
+const socketlib, { NspBuilder } = require('@novice1/socket');
 const http = require('http').createServer();
-const { NspBuilder } = socketlib;
 
-var main = NspBuilder('/main');
+let main = new NspBuilder('/main');
 
-var app = NspBuilder('/app');
+let app = new NspBuilder('/app');
 
 main.link('/v1', app);
 
@@ -229,11 +216,10 @@ You can also limit the namespaces used to build the server.
 Example
 
 ```js
-const socketlib = require('@novice1/socket');
-const { NspBuilder } = socketlib;
+const socketlib, { NspBuilder } = require('@novice1/socket');
 
-var appNsp = NspBuilder('/app');
-var otherNsp = NspBuilder();
+let appNsp = new NspBuilder('/app');
+let otherNsp = new NspBuilder();
 
 socketlib()
   .link(appNsp)
@@ -251,11 +237,10 @@ socketlib(['/main']) // limit to '/main'
 It will build the `socket.io` server from the settings and a `http` server.
 
 ```js
-const socketlib = require('@novice1/socket');
-const { NspBuilder } = socketlib;
+const socketlib, { NspBuilder } = require('@novice1/socket');
 const http = require('http').createServer();
 
-var appNsp = NspBuilder('/app');
+let appNsp = new NspBuilder('/app');
 
 socketlib()
   .link(app)
@@ -273,7 +258,7 @@ Get a description of events listened by namespaces with the property `events`.
 ```js
 const socketlib = require('@novice1/socket');
 
-var app = socketlib();
+let app = socketlib();
 
 // do something
 
@@ -290,7 +275,7 @@ You can also get one [namespace](https://socket.io/docs/server-api/#Namespace) w
 const socketlib = require('@novice1/socket');
 const http = require('http').createServer();
 
-var app = socketlib();
+let app = socketlib();
 
 // do something
 
@@ -299,7 +284,7 @@ app.build(http);
 console.log(app.activeNamespaces);
 // displays an array of strings
 
-var nsp = app.getNamespace('/');
+let nsp = app.getNamespace('/');
 // get namespace '/' from socket.io server
 ```
 
@@ -312,7 +297,7 @@ To rebuild the application you can call the method `build` with no arguments.
 const socketlib = require('@novice1/socket');
 const http = require('http').createServer();
 
-var app = socketlib();
+let app = socketlib();
 
 // do something
 
@@ -350,16 +335,15 @@ http.listen(3000, function(){
 - **add(object, ...fn) : this**
 - **add(...NspBuilder) : this** (_alias for "link" method_)
 - **add(string, ...NspBuilder) : this** (_alias for "link"method_)
-- **build([Server]) : this**
-- [**close**](https://socket.io/docs/server-api/#server-close-callback)
+- **build([http.Server]) : this**
+- [**close**](https://socket.io/docs/v4/server-api/#server-close-callback)
 - **destroy() : this**
-- **getNamespace(string) : [Namespace](https://socket.io/docs/server-api/#Namespace)**
+- **getNamespace(string) : [Namespace](https://socket.io/docs/v4/server-api/#Namespace)**
 - **link(...NspBuilder) : this**
 - **link(string, ...NspBuilder) : this**
 - **use(...fn) : this**
 - **onConnection(..fn) : this**
 - **onDisconnect(..fn) : this**
-- [**origins**](https://socket.io/docs/server-api/#server-origins-value)
 
 
 ## Utils
@@ -367,11 +351,10 @@ http.listen(3000, function(){
 ### explodeData
 
 ```js
-const socketlib = require('@novice1/socket');
-const { NspBuilder, utils } = socketlib;
+const { NspBuilder, utils } = require('@novice1/socket');
 const { explodeData } = utils;
 
-var defaultNamespace = NspBuilder() 
+let defaultNamespace = new NspBuilder() 
   .add('chat message', explodeData(function(msg) {
     // - this.req
     // - this.res
@@ -384,11 +367,10 @@ var defaultNamespace = NspBuilder()
 ### errorHandler
 
 ```js
-const socketlib = require('@novice1/socket');
-const { NspBuilder, utils } = socketlib;
+const { NspBuilder, utils } = require('@novice1/socket');
 const { errorHandler } = utils;
 
-var defaultNamespace = NspBuilder() 
+let defaultNamespace = new NspBuilder() 
   .add('chat message', errorHandler(function(req, res) {
     // do something that could throw an error
   }, 'chat error'));
@@ -398,11 +380,10 @@ var defaultNamespace = NspBuilder()
 Other examples
 
 ```js
-const socketlib = require('@novice1/socket');
-const { NspBuilder, utils } = socketlib;
+const { NspBuilder, utils } = require('@novice1/socket');
 const { errorHandler } = utils;
 
-var defaultNamespace = NspBuilder() 
+let defaultNamespace = new NspBuilder() 
   .add('chat message', errorHandler(explodeData(function(msg) {
     // do something
   }), 'chat error'));

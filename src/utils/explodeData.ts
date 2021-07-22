@@ -1,13 +1,13 @@
-import { Controller, Request, Replier, NextFunc } from '../definitions';
+import { Controller, Request, Response, NextFunc } from '../definitions';
 
-type Func<T, E> = (this: {
-  req: Request<T>,
-  res: Replier,
-  next: NextFunc<E>
-}, ...args: T[]) => void;
+type Func<DataType, ErrorType> = (this: {
+  req: Request<DataType>,
+  res: Response,
+  next: NextFunc<ErrorType>
+}, ...args: DataType[]) => void;
 
-function explodeData<T, E>(fn: Func<T, E>): Controller<T, E> {
-  const ctrl: Controller<T, E> = function ctrl(req, res, next) {
+function explodeData<DataType, ErrorType>(fn: Func<DataType, ErrorType>): Controller<DataType, ErrorType> {
+  const ctrl: Controller<DataType, ErrorType> = function ctrl(req, res, next) {
     const instance = {
       req,
       res,

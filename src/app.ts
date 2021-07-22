@@ -21,16 +21,9 @@ export class ServerApp {
   #router?: NspBuilder;
   #io?: Server;
 
-  constructor();
-  /**
-   * @param namespace Limits application to one namespace.
-   */
-  constructor(namespace?: string);
   /**
    * @param namespaces Limits application to some namespaces.
    */
-  constructor(namespaces?: string[]);
-  constructor(namespaces?: string | string[]);
   constructor(namespaces?: string | string[]) {
     this.#namespaces = toArray(namespaces, 'string');
     this.#onConnectionFn = [];
@@ -51,6 +44,14 @@ export class ServerApp {
 
   get currentNamespaces(): string[] {
     return this.getNamespaces();
+  }
+
+  /**
+   * In case you need to do something
+   * that this lib cannot do. (e.g.: socket.io v4.x.x methods)
+   */
+  get server(): Server | undefined {
+    return this.getServer();
   }
 
   private routing(): NspBuilder {
@@ -79,8 +80,8 @@ export class ServerApp {
   /**
    * @description Add listener (event)
    */
-  add<T, E>(name: string, ...fn: Controller<T, E>[]): ServerApp;
-  add<T, E>(name: ListenerBuilderSettings, ...fn: Controller<T, E>[]): ServerApp;
+  add<DataType, ErrorType>(name: string, ...fn: Controller<DataType, ErrorType>[]): ServerApp;
+  add<DataType, ErrorType>(name: ListenerBuilderSettings, ...fn: Controller<DataType, ErrorType>[]): ServerApp;
   add(...fn: ListenerBuilder[]): ServerApp;
   add(...fn: (ListenerBuilder[])[]): ServerApp;
   /**
@@ -260,13 +261,31 @@ export class ServerApp {
   }
 
   /**
-   * Closes server connection
+   * Closes the Socket.IO server.
+   * 
+   * Note: this also closes the underlying HTTP server.
    */
-  close(fn?: (err?: Error) => void): ServerApp {
+  close(): Promise<void>;
+  close(fn: (err?: Error) => void): void;
+  close(fn?: (err?: Error) => void): void | Promise<void> {
+    let r;
     if (this.#io) {
-      this.#io.close(fn);
+      const server = this.#io;
+      if (fn) {
+        r = server.close(fn);
+      } else {
+        r = new Promise<void>((resolve, reject) => {
+          server.close((err) => {
+            if(err) {
+              reject(err);
+            } else {
+              resolve();
+            }
+          });
+        });
+      }
     }
-    return this;
+    return r;
   }
 
   onConnection(...fn: ((socket: Socket, nsp: Namespace, server: Server) => void)[]): ServerApp;

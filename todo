@@ -1,13 +1,15 @@
-Upgrade:
+- typescript:
+  - res.of().emit('chat message', msg); // from current namespace
+  - readme
+  - use Map instead of Array in for some class properties (e.g.: function array => function map)
+    - add methods to remove an element from Map
+
+Archive:
   - upgrade package to newest version of "socket.io" @done
   - update kaukau @done
-  - adapt code
-
-typescript:
+  - adapt code @done
   - write src @done
     - src/app.ts @done
   - write test.ts @done
   - change names of classes (e.g.: SocketApp => ServerApp, etc ...) @done
-  - use Map instead of Array in for some class properties (e.g.: function array => function map)
-    - add methods to remove an element from Map
-  - rename Replier => Response
+  - rename Replier => Response @done

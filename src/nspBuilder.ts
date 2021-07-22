@@ -65,7 +65,7 @@ export class NspBuilder {
   /**
    * @description Add listener (event)
    */
-  add<T, E>(name: string | ListenerBuilderSettings, ...fn: Controller<T, E>[]): NspBuilder;
+  add<DataType, ErrorType>(name: string | ListenerBuilderSettings, ...fn: Controller<DataType, ErrorType>[]): NspBuilder;
   add(...fn: ListenerBuilder[]): NspBuilder;
   add(...fn: (ListenerBuilder[])[]): NspBuilder;
   /**

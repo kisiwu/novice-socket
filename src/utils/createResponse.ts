@@ -1,12 +1,12 @@
 import { Namespace, Socket, Server } from 'socket.io';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
-import { Replier } from '../definitions';
+import { Response } from '../definitions';
 
 
-function _createReplier(socket: Socket, nsp: Namespace, io: Server): Replier {
+function createResponse(socket: Socket, nsp: Namespace, io: Server): Response {
 
-  const replier: Replier = ( () => {
-    const _replier: Partial<Replier> = function (
+  const response: Response = ( () => {
+    const _response: Partial<Response> = function (
     event: string | ((socket: Socket, nsp: Namespace, io: Server) => void), 
     ...args: unknown[]) {
       if (typeof event === 'function') {
@@ -15,19 +15,19 @@ function _createReplier(socket: Socket, nsp: Namespace, io: Server): Replier {
       socket.emit(event, ...args);
     }
 
-    _replier.emit = _replier as Replier;
+    _response.emit = _response as Response;
     
-    _replier.except = (room: string | string[]) => {
+    _response.except = (room: string | string[]) => {
       return socket.except(room);
     };
-    _replier.in = (room: string | string[]) => {
+    _response.in = (room: string | string[]) => {
       return socket.to(room);
     };
-    _replier.to = (room: string | string[]) => {
+    _response.to = (room: string | string[]) => {
       return socket.to(room);
     };
 
-    Object.defineProperties(_replier, {
+    Object.defineProperties(_response, {
       broadcast: {
         configurable: false,
         enumerable: true,
@@ -40,7 +40,7 @@ function _createReplier(socket: Socket, nsp: Namespace, io: Server): Replier {
         enumerable: true,
         get: () => {
           socket.volatile;
-          return _replier;
+          return _response;
         }
       },
       compressed: {
@@ -48,7 +48,7 @@ function _createReplier(socket: Socket, nsp: Namespace, io: Server): Replier {
         enumerable: true,
         get: () => {
           socket.compress(true);
-          return _replier;
+          return _response;
         }
       },
       notCompressed: {
@@ -56,12 +56,12 @@ function _createReplier(socket: Socket, nsp: Namespace, io: Server): Replier {
         enumerable: true,
         get: () => {
           socket.compress(false);
-          return _replier;
+          return _response;
         }
       }
     });
 
-    _replier.of = function(
+    _response.of = function(
       name: string | RegExp | ((
         name: string,
         query: { [key: string]: unknown },
@@ -71,12 +71,10 @@ function _createReplier(socket: Socket, nsp: Namespace, io: Server): Replier {
       return io.of(name, fn);
     };
 
-    return _replier as Replier;
+    return _response as Response;
   })();
 
-  return replier;
+  return response;
 }
 
-export default function createReplier(socket: Socket, nsp: Namespace, io: Server): Replier {
-  return _createReplier(socket, nsp, io);
-}
+export default createResponse;

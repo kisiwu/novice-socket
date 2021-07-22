@@ -1,19 +1,18 @@
-
-export {ServerApp} from './app'
-export {NspBuilder} from './nspBuilder'
-export {ListenerBuilder} from './listenerBuilder'
 import createServerApp from './app'
 import errorHandler from './utils/errorHandler'
 import explodeData from './utils/explodeData'
-import toArray from './utils/toArray'
 
 /**
  * @description utils
  */
 export const utils = {
   errorHandler,
-  explodeData,
-  toArray
+  explodeData
 };
+
+export { ServerApp } from './app'
+export { NspBuilder } from './nspBuilder'
+export { ListenerBuilder } from './listenerBuilder'
+
 
 export default createServerApp;

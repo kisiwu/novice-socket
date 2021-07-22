@@ -1,7 +1,7 @@
 import { Controller } from '../definitions';
 
-function errorHandler<T, E>(fn: Controller<T, E>, errorEvent?: string): Controller<T, E> {
-  const ctrl: Controller<T, E> = function (req, res, next) {
+function errorHandler<DataType, ErrorType>(fn: Controller<DataType, ErrorType>, errorEvent?: string): Controller<DataType, ErrorType> {
+  const ctrl: Controller<DataType, ErrorType> = function (req, res, next) {
     try {
       fn(req, res, next);
     } catch (err) {
