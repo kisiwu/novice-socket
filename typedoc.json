@@ -1,6 +1,12 @@
 {
   "entryPoints": [
-    "src"
+    "src/definitions.ts",
+    "src/app.ts",
+    "src/index.ts",
+    "src/listenerBuilder.ts",
+    "src/nspBuilder.ts",
+    "src/utils/errorHandler.ts",
+    "src/utils/explodeData.ts"
   ],
   "out": "docs",
 
