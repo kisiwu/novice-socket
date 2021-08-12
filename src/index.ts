@@ -11,8 +11,8 @@ export const utils = {
 };
 
 export * from './app'
-export { NspBuilder } from './nspBuilder'
-export { ListenerBuilder } from './listenerBuilder'
-
+export * from './nspBuilder'
+export * from './listenerBuilder'
+export * from './definitions'
 
 export default createServerApp;
