@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import socketlib, { ServerApp, NspBuilder, utils, ListenerBuilder } from '../../src/index';
+import { ServerApp, NspBuilder, utils, ListenerBuilder, createServerApp } from '../../src/index';
 import { expect } from 'chai';
 import http from 'http';
 const { explodeData, errorHandler } = utils;
@@ -74,7 +74,7 @@ describe('Usage', () => {
 
  
   it('should create app limited to namespace \'/main\'', function() {
-    serverApp = socketlib(['/main'])
+    serverApp = createServerApp(['/main'])
       .onConnection((socket, nsp) => {
         // socket.use(fn)
         // socket.join(room[, callback])

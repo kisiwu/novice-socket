@@ -10,7 +10,7 @@ export const utils = {
   explodeData
 };
 
-export { ServerApp } from './app'
+export * from './app'
 export { NspBuilder } from './nspBuilder'
 export { ListenerBuilder } from './listenerBuilder'
 

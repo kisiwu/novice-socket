@@ -341,7 +341,7 @@ export class ServerApp {
 /**
  * @param namespaces Limits application to some namespaces.
  */
-function createServerApp(namespaces?: string | string[]): ServerApp {
+export function createServerApp(namespaces?: string | string[]): ServerApp {
   return new ServerApp(namespaces);
 }
 

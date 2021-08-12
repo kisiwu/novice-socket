@@ -1,7 +1,7 @@
 const kaukau = require('kaukau');
 
 const http = require('http');
-const { NspBuilder, utils, default: socketlib } = require('../../lib/index');
+const { NspBuilder, utils, createServerApp } = require('../../lib/index');
 const { explodeData, errorHandler } = utils;
 
 
@@ -56,7 +56,7 @@ describe('Usage', () => {
 
  
   it('should create app limited to namespace \'/main\'', function() {
-    socketapp = socketlib(['/main'])
+    socketapp = createServerApp(['/main'])
       .onConnection((socket, nsp) => {
         // socket.use(fn)
         // socket.join(room[, callback])

@@ -13,7 +13,7 @@ $ npm install @novice1/socket
 ### Basically
 
 ```js
-const { NspBuilder, default: socketlib } = require('@novice1/socket');
+const { NspBuilder, createServerApp } = require('@novice1/socket');
 const http = require('http').createServer();
 
 // create namespace and add events to it
@@ -28,7 +28,7 @@ let defaultNamespace = new NspBuilder()
   });
 
 // create application
-let socketApp = socketlib()
+let socketApp = createServerApp()
   .onConnection((socket, nsp) => {
     // socket.use(fn)
     // socket.join(room[, callback])
@@ -222,7 +222,7 @@ A namespace can be linked to another namespace. That way the name of the one bei
 Example
 
 ```js
-const { NspBuilder, default: socketlib } = require('@novice1/socket');
+const { NspBuilder, createServerApp } = require('@novice1/socket');
 const http = require('http').createServer();
 
 let main = new NspBuilder('/main');
@@ -231,7 +231,7 @@ let app = new NspBuilder('/app');
 
 main.link('/v1', app);
 
-socketlib()
+createServerApp()
   .link(main) // same as link('/', main)
   .build(http)
 // the namespaces created will be '/main' and '/main/v1/app'
@@ -251,17 +251,17 @@ You can also limit the namespaces used to build the server.
 Example
 
 ```js
-const { NspBuilder, default: socketlib } = require('@novice1/socket');
+const { NspBuilder, createServerApp } = require('@novice1/socket');
 
 let appNsp = new NspBuilder('/app');
 let otherNsp = new NspBuilder();
 
-socketlib()
+createServerApp()
   .link(appNsp)
   .link('/other', otherNsp);
 // the namespaces created will be '/app' and '/other'
 
-socketlib(['/main']) // limit to '/main'
+createServerApp(['/main']) // limit to '/main'
   .link(appNsp)
   .link('/other', otherNsp); // useless
 // the namespaces created will be '/main'
@@ -273,12 +273,12 @@ It will build the `socket.io` server from a `http` server.
 The settings (namespaces, etc ...) need to be set before the build.
 
 ```js
-const { NspBuilder, default: socketlib } = require('@novice1/socket');
+const { NspBuilder, createServerApp } = require('@novice1/socket');
 const http = require('http').createServer();
 
 let appNsp = new NspBuilder('/app');
 
-socketlib()
+createServerApp()
   .link(app)
   .build(http); // build socket.io server
 
@@ -292,9 +292,9 @@ http.listen(3000, function(){
 Get a description of events listened by namespaces with the property `events`.
 
 ```js
-const { default: socketlib } = require('@novice1/socket');
+const { createServerApp } = require('@novice1/socket');
 
-let app = socketlib();
+let app = createServerApp();
 
 // do something
 
@@ -308,10 +308,10 @@ Get an array of the active namespaces (= created on the server) with the propert
 You can also get one [namespace](https://socket.io/docs/v4/server-api/#Namespace) with the method `getNamespace`.
 
 ```js
-const { default: socketlib } = require('@novice1/socket');
+const { createServerApp } = require('@novice1/socket');
 const http = require('http').createServer();
 
-let app = socketlib();
+let app = createServerApp();
 
 // do something
 
@@ -330,10 +330,10 @@ You can disconnect all clients and stop handling future connections by executing
 To rebuild the application you can call the method `build` with no arguments.
 
 ```js
-const { default: socketlib } = require('@novice1/socket');
+const { createServerApp } = require('@novice1/socket');
 const http = require('http').createServer();
 
-let app = socketlib();
+let app = createServerApp();
 
 // do something
 
