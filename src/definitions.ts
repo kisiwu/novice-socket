@@ -36,11 +36,11 @@ export interface Response<ListenEvents extends EventsMap = DefaultEventsMap, Emi
     
   emit: Response<ListenEvents, EmitEvents, ServerSideEvents>;
 
-  except: (room: string | string[]) => BroadcastOperator<EmitEvents>;
-  in: (room: string | string[]) => BroadcastOperator<EmitEvents>;
-  to: (room: string | string[]) => BroadcastOperator<EmitEvents>;
+  except: <SocketData = any>(room: string | string[]) => BroadcastOperator<EmitEvents, SocketData>;
+  in: <SocketData = any>(room: string | string[]) => BroadcastOperator<EmitEvents, SocketData>;
+  to: <SocketData = any>(room: string | string[]) => BroadcastOperator<EmitEvents, SocketData>;
 
-  broadcast: BroadcastOperator<EmitEvents>;
+  broadcast: BroadcastOperator<EmitEvents, any>;
   volatile: Response<ListenEvents, EmitEvents, ServerSideEvents>;
   compressed: Response<ListenEvents, EmitEvents, ServerSideEvents>;
   notCompressed: Response<ListenEvents, EmitEvents, ServerSideEvents>,
