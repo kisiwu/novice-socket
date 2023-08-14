@@ -3,6 +3,7 @@ const kaukau = require('kaukau');
 const http = require('http');
 const { NspBuilder, utils, createServerApp } = require('../../lib/index');
 const { explodeData, errorHandler } = utils;
+const { expect } = require('chai');
 
 
 describe('Usage', () => {

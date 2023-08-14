@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { BroadcastOperator, Namespace, Socket, Server } from 'socket.io'
 import { DefaultEventsMap, EventsMap } from 'socket.io/dist/typed-events';
 import { Handshake } from 'socket.io/dist/socket'

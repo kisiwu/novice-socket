@@ -1,12 +1,12 @@
 import { Controller, Request, Response, NextFunc } from '../definitions';
 
-type Func<DataType, ErrorType> = (this: {
+export type Func<DataType, ErrorType> = (this: {
   req: Request<DataType>,
   res: Response,
   next: NextFunc<ErrorType>
 }, ...args: DataType[]) => void;
 
-function explodeData<DataType, ErrorType>(fn: Func<DataType, ErrorType>): Controller<DataType, ErrorType> {
+export function explodeData<DataType, ErrorType>(fn: Func<DataType, ErrorType>): Controller<DataType, ErrorType> {
   const ctrl: Controller<DataType, ErrorType> = function ctrl(req, res, next) {
     const instance = {
       req,
@@ -18,4 +18,4 @@ function explodeData<DataType, ErrorType>(fn: Func<DataType, ErrorType>): Contro
   return ctrl;
 }
 
-export default explodeData;
+//export default explodeData;

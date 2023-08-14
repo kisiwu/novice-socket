@@ -11,7 +11,7 @@ function errorHandler<DataType, ErrorType>(fn: Controller<DataType, ErrorType>, 
         calledNext = true;
         next(err);
       });
-    } catch (err) {
+    } catch (err: any) { // eslint-disable-line
       let e = err;
       if (err instanceof Error) {
         e = {

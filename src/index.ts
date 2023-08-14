@@ -1,6 +1,6 @@
 import createServerApp from './app'
 import errorHandler from './utils/errorHandler'
-import explodeData from './utils/explodeData'
+import { explodeData } from './utils/explodeData'
 
 /**
  * @description utils
