@@ -2,8 +2,15 @@
 import { ServerApp, NspBuilder, utils, ListenerBuilder, createServerApp } from '../../src/index';
 import { expect } from 'chai';
 import http from 'http';
+import { Socket } from 'socket.io';
 const { explodeData, errorHandler } = utils;
 
+interface CustomSocket extends Socket {
+  user?: {
+    id: number
+    active: boolean
+  }
+}
 
 describe('Usage', () => {
   let nsp: NspBuilder, serverApp: ServerApp, server: http.Server;
@@ -45,7 +52,10 @@ describe('Usage', () => {
       name: 'full', 
       description: 'trying full listener',
       tags: ['Socket API']
-    }, errorHandler(explodeData(function(msg: string, other?: string){
+    }, errorHandler(explodeData(function(msg?: string, other?: string){
+      const sock: CustomSocket = this.req.socket
+
+      sock.user?.id
       this.res
         .of()
         .volatile
