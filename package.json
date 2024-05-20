@@ -1,7 +1,7 @@
 {
   "name": "@novice1/socket",
   "private": false,
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "",
   "main": "lib/index.js",
   "homepage": "https://kisiwu.github.io/novice-socket/latest/",
@@ -20,7 +20,7 @@
   "license": "MIT",
   "dependencies": {
     "array-flatten": "^3.0.0",
-    "socket.io": "^4.7.4",
+    "socket.io": "^4.7.5",
     "socket.io-adapter": "^2.5.4",
     "tslib": "^2.6.2"
   },
