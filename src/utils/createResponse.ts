@@ -38,8 +38,7 @@ function createResponse(socket: Socket, nsp: Namespace, io: Server): Response {
         configurable: false,
         enumerable: true,
         get: () => {
-          socket.volatile;
-          return _response;
+          return socket.volatile;
         }
       },
       compressed: {

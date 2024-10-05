@@ -24,7 +24,7 @@ describe('Usage', () => {
         next(new Error('Authentication error'));
       })
       // socket server events
-      .add('error', explodeData(function(error){
+      .add('error', explodeData(function(_error){
         //
       }))
       .add('disconnecting', explodeData(function(reason: string){
@@ -35,7 +35,7 @@ describe('Usage', () => {
       .add('turn off', (req, res) => {
         res.of('/').emit('turned off', req.data[0]);
       })
-      .add({name: 'turn on', description: 'does something'}, errorHandler(explodeData(function(msg: string | number, other: string | number){
+      .add({name: 'turn on', description: 'does something'}, errorHandler(explodeData(function(msg: string | number, _other: string | number){
         if(!(typeof msg === 'string' && msg.length > 2)) {
           throw TypeError('The message must be a string of min 3 chars');
         }
@@ -52,7 +52,7 @@ describe('Usage', () => {
       name: 'full', 
       description: 'trying full listener',
       tags: ['Socket API']
-    }, errorHandler(explodeData(function(msg?: string, other?: string){
+    }, errorHandler(explodeData(function(msg?: string, _other?: string){
       const sock: CustomSocket = this.req.socket
 
       sock.user?.id
@@ -60,7 +60,7 @@ describe('Usage', () => {
         .of()
         .volatile
         .emit('full', msg);
-    }))).setErrorController((err, req, res) => {
+    }))).setErrorController((_err, req, res) => {
       res('full error', req.data[0], (data: unknown) => {
         console.log('ack:', data)
       });
@@ -85,7 +85,7 @@ describe('Usage', () => {
  
   it('should create app limited to namespace \'/main\'', function() {
     serverApp = createServerApp(['/main'])
-      .onConnection((socket, nsp) => {
+      .onConnection((_socket, _nsp) => {
         // socket.use(fn)
         // socket.join(room[, callback])
         // socket.disconnect(close)
@@ -97,7 +97,7 @@ describe('Usage', () => {
         // socket.removeAllListeners([eventName])
         // socket.eventNames()
       })
-      .onDisconnect((reason, socket, nsp) => {
+      .onDisconnect((_reason, _socket, _nsp) => {
         //
       });
 

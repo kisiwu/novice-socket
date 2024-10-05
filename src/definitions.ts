@@ -2,7 +2,7 @@
 
 import { BroadcastOperator, Namespace, Socket, Server } from 'socket.io'
 import { DefaultEventsMap, EventsMap } from 'socket.io/dist/typed-events';
-import { Handshake } from 'socket.io/dist/socket'
+import { Handshake } from 'socket.io/dist/socket-types'
 import { ExtendedError } from 'socket.io/dist/namespace';
 
 export type Middleware = ((socket: Socket, next: (err?: ExtendedError | undefined) => void) => void); 
