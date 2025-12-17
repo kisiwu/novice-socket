@@ -2,7 +2,7 @@
   "name": "@novice1/socket",
   "private": false,
   "version": "0.4.4",
-  "description": "",
+  "description": "Simplifies creating server-side Socket.IO applications by providing namespace and event builders, middleware support, and utilities for robust real-time communication.",
   "main": "lib/index.js",
   "homepage": "https://kisiwu.github.io/novice-socket/latest/",
   "repository": {
