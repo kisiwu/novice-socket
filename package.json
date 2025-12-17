@@ -1,7 +1,7 @@
 {
   "name": "@novice1/socket",
   "private": false,
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "",
   "main": "lib/index.js",
   "homepage": "https://kisiwu.github.io/novice-socket/latest/",
@@ -12,29 +12,47 @@
   "scripts": {
     "doc": "typedoc",
     "build": "tsc",
-    "lint": "eslint src/**/*.ts",
+    "lint": "eslint .",
     "test": "kaukau --require ts-node/register --config kaukau-config-src.json",
-    "testlib": "kaukau --config kaukau-config-lib.json"
+    "testlib": "kaukau --config kaukau-config-lib.json",
+    "format": "cross-env NODE_OPTIONS=--experimental-strip-types prettier --write ./src",
+    "format:check": "cross-env NODE_OPTIONS=--experimental-strip-types prettier --check ./src",
+    "format:staged": "cross-env NODE_OPTIONS=--experimental-strip-types lint-staged"
   },
   "author": "demingongo",
   "license": "MIT",
   "dependencies": {
     "array-flatten": "^3.0.0",
-    "socket.io": "^4.8.0",
+    "socket.io": "^4.8.1",
     "socket.io-adapter": "^2.5.5",
-    "tslib": "^2.7.0"
+    "tslib": "^2.8.1"
   },
   "devDependencies": {
-    "@types/chai": "^4.3.12",
-    "@types/mocha": "^10.0.8",
-    "@types/node": "^22.7.4",
-    "@typescript-eslint/eslint-plugin": "^8.8.0",
-    "@typescript-eslint/parser": "^8.8.0",
-    "eslint": "^8.57.0",
-    "express": "^4.21.1",
-    "kaukau": "^3.1.2",
+    "@eslint/eslintrc": "^3.3.3",
+    "@eslint/js": "^9.39.2",
+    "@stylistic/eslint-plugin": "^5.6.1",
+    "@trivago/prettier-plugin-sort-imports": "^6.0.0",
+    "@types/chai": "^5.2.3",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^25.0.3",
+    "@typescript-eslint/eslint-plugin": "^8.50.0",
+    "@typescript-eslint/parser": "^8.50.0",
+    "chai": "^4.5.0",
+    "cross-env": "^10.1.0",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-import-resolver-typescript": "^4.4.4",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-mocha": "^11.2.0",
+    "express": "^5.2.1",
+    "globals": "^16.5.0",
+    "husky": "^9.1.7",
+    "kaukau": "^4.1.7",
+    "lint-staged": "^16.2.7",
+    "prettier": "^3.7.4",
     "ts-node": "^10.9.2",
-    "typedoc": "^0.26.8",
-    "typescript": "^5.6.2"
+    "typedoc": "^0.28.15",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.50.0"
   }
 }
