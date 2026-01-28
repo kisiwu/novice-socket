@@ -20,7 +20,7 @@ const compat = new FlatCompat({
 });
 
 export default defineConfig([
-    { ignores: ['lib/', 'dist/', 'build/', 'coverage/', '.husky/', 'assets/'] },
+    { ignores: ['lib/', 'dist/', 'build/', 'coverage/', '.husky/', 'assets/', 'docs/'] },
     mochaPlugin.configs.recommended,
     {
         extends: compat.extends(

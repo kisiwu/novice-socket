@@ -13,6 +13,5 @@
   "excludeInternal": true,
   "excludePrivate": true,
   "includeVersion": true,
-  "hideGenerator": true,
-  "includes": "typedocIncludes/"
+  "hideGenerator": true
 }
