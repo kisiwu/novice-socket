@@ -6,8 +6,8 @@ import { explodeData } from './utils/explodeData';
  * @description utils
  */
 export const utils = {
-    errorHandler,
-    explodeData,
+  errorHandler,
+  explodeData,
 };
 
 export * from './app';

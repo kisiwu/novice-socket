@@ -13,28 +13,30 @@ $ npm install @novice1/socket
 ### Basically
 
 ```js
-const { NspBuilder, createServerApp } = require('@novice1/socket');
-const http = require('http').createServer();
+import { NspBuilder, createServerApp } from '@novice1/socket';
+import { createServer } from 'http';
+
+const http = createServer();
 
 // create namespace and add events to it
-let defaultNamespace = new NspBuilder() 
-  .add('chat message', function(req, res, next) {
-    let msg = req.data[0];
+const defaultNamespace = new NspBuilder()
+  .add('chat message', function (req, res, next) {
+    const msg = req.data[0];
     console.log('message: ' + msg);
     res.of().emit('chat message', msg);
   })
-  .add('disconnecting', function(req, res, next) {
+  .add('disconnecting', function (req, res, next) {
     console.log('user disconnecting');
   });
 
 // create application
-let socketApp = createServerApp()
+const socketApp = createServerApp()
   .onConnection((socket, nsp) => {
     // socket.use(fn)
     // socket.join(room[, callback])
     // socket.disconnect(close)
 
-    // Inherited from EventEmitter (along with other methods not mentioned here). 
+    // Inherited from EventEmitter (along with other methods not mentioned here).
     // See Node.js documentation for the events module.
     // socket.once(eventName, listener)
     // socket.removeListener(eventName, listener)
@@ -49,10 +51,10 @@ let socketApp = createServerApp()
   .link(defaultNamespace); // link namespace to the application
 
 // build the application
-socketApp.build(http); 
+socketApp.build(http);
 
 // start server
-http.listen(3000, function(){
+http.listen(3000, function () {
   console.log('listening on *:3000');
 });
 ```
@@ -64,11 +66,11 @@ http.listen(3000, function(){
 When setting a namespace you can define the name otherwise it will be '/' by default
 
 ```js
-const { NspBuilder } = require('@novice1/socket');
+import { NspBuilder } from '@novice1/socket';
 
-let defaultNamespace = new NspBuilder(); // same as new NspBuilder('/')
+const defaultNamespace = new NspBuilder(); // same as new NspBuilder('/')
 
-let appNamespace = new NspBuilder('/app');
+const appNamespace = new NspBuilder('/app');
 ```
 
 #### Add events
@@ -76,29 +78,36 @@ let appNamespace = new NspBuilder('/app');
 You can add an event listener to a namespace with the method 'add'. It uses the method chaining pattern.
 The first argument is the event's name. The other arguments must be the functions to execute. Multiple functions can be executed.
 Each function receives three parameters:
+
 - the [request context](#####requestcontext)
 - a [response object](#####responseobject)
 - a callback to optionally defer execution to the next function
 
 ```js
-const { NspBuilder } = require('@novice1/socket');
+import { NspBuilder } from '@novice1/socket';
 
-let appNamespace = new NspBuilder('/app')
-  .add('my event', function one(req, res, next) {
+const appNamespace = new NspBuilder('/app').add(
+  'my event',
+  function one(req, res, next) {
     // do something
     next(); // defer execution to the next function ('two')
-  }, function two(req, res) {
+  },
+  function two(req, res) {
     // do something
-  });
+  }
+);
 
 // also
-appNamespace.add({
-  name: 'event name',
-  description: 'short description',
-  tags: ['Example']
-}, function(req, res) {
-  // do something
-})
+appNamespace.add(
+  {
+    name: 'event name',
+    description: 'short description',
+    tags: ['Example'],
+  },
+  function (req, res) {
+    // do something
+  }
+);
 ```
 
 ##### <a id="requestcontext"></a> request context
@@ -106,11 +115,10 @@ appNamespace.add({
 It is an object with the following properties:
 
 - **data** : Array of data sent through the event
-- **event** : the event's details (*name, description, tags*)
+- **event** : the event's details (_name, description, tags_)
 - **nsp** : [Namespace](https://socket.io/docs/v4/server-api/#Namespace)
 - **socket** : [Socket](https://socket.io/docs/v4/server-api/#Socket)
-- **handshake** : [*Socket.handshake*](https://socket.io/docs/v4/server-api/#socket-handshake)
-
+- **handshake** : [_Socket.handshake_](https://socket.io/docs/v4/server-api/#socket-handshake)
 
 ##### <a id="responseobject"></a> response object
 
@@ -119,11 +127,11 @@ Can be used to emit an event from a socket, a room or a namespace
 Example
 
 ```js
-const { NspBuilder } = require('@novice1/socket');
+import { NspBuilder } from '@novice1/socket';
 
 new NspBuilder('/app')
   .add('respond from socket', function one(req, res, next) {
-    let msg = req.data[0];
+    const msg = req.data[0];
 
     // examples from socket and room
     res.emit('chat message', msg);
@@ -134,8 +142,8 @@ new NspBuilder('/app')
     res.in('room1').emit('chat message', msg);
     res.to('room1').emit('chat message', msg);
   })
-  .add('respond from namespace', function(req, res) {
-    let msg = req.data[0];
+  .add('respond from namespace', function (req, res) {
+    const msg = req.data[0];
 
     // examples from namespaces and room
     res.of().emit('chat message', msg); // from current namespace
@@ -149,50 +157,47 @@ new NspBuilder('/app')
 
 #### Add events with ListenerBuilder
 
-The advantage with ListenerBuilder is that you can define the callback (ErrorController) to be called when you execute the "next" callback with an argument that evaluates to `true`. 
+The advantage with ListenerBuilder is that you can define the callback (ErrorController) to be called when you execute the "next" callback with an argument that evaluates to `true`.
 
 Example
 
 ```js
-const { NspBuilder, ListenerBuilder } = require('@novice1/socket');
+import { NspBuilder, ListenerBuilder } from '@novice1/socket';
 
-let listenerBuilder = new ListenerBuilder(
-    'eventName',
-    (req, res, next) => {
-      if (req.data[0]) {
-        // not ok, call ErrorController
-        next(new Error('missing message'));
-      } else {
-        // ok, defer
-        next();
-      }
-    },
-    (req, res) => {
-      // done
+const listenerBuilder = new ListenerBuilder(
+  'eventName',
+  (req, res, next) => {
+    if (req.data[0]) {
+      // not ok, call ErrorController
+      next(new Error('missing message'));
+    } else {
+      // ok, defer
+      next();
     }
-  ).setErrorController((err, req, res) => {
-    // not ok, do something
-  });
+  },
+  (req, res) => {
+    // done
+  }
+).setErrorController((err, req, res) => {
+  // not ok, do something
+});
 
-new NspBuilder('/app')
-  .add(listenerBuilder);
+new NspBuilder('/app').add(listenerBuilder);
 ```
-
 
 #### Register a middleware to a namespace
 
 Example
 
 ```js
-const { NspBuilder } = require('@novice1/socket');
+import { NspBuilder } from '@novice1/socket';
 
-new NspBuilder() 
-  .use((socket, next) => {
-    if (socket.request.headers.cookie) {
-      return next();
-    }
-    next(new Error('Authentication error'));
-  })
+new NspBuilder().use((socket, next) => {
+  if (socket.request.headers.cookie) {
+    return next();
+  }
+  next(new Error('Authentication error'));
+});
 ```
 
 See [namespace.use(fn)](https://socket.io/docs/v4/server-api/#namespace-use-fn)
@@ -204,13 +209,12 @@ Register a middleware to all sockets of a namespace.
 Example
 
 ```js
-const { NspBuilder } = require('@novice1/socket');
+import { NspBuilder } from '@novice1/socket';
 
-new NspBuilder() 
-  .add((socket, packet, next) => {
-    if (packet.doge === true) return next();
-    next(new Error('Not a doge error'));
-  })
+new NspBuilder().add((socket, packet, next) => {
+  if (packet.doge === true) return next();
+  next(new Error('Not a doge error'));
+});
 ```
 
 See [socket.use(fn)](https://socket.io/docs/v4/server-api/#socket-use-fn)
@@ -222,21 +226,23 @@ A namespace can be linked to another namespace. That way the name of the one bei
 Example
 
 ```js
-const { NspBuilder, createServerApp } = require('@novice1/socket');
-const http = require('http').createServer();
+import { NspBuilder, createServerApp } from '@novice1/socket';
+import { createServer } from 'http';
 
-let main = new NspBuilder('/main');
+const http = createServer();
 
-let app = new NspBuilder('/app');
+const main = new NspBuilder('/main');
+
+const app = new NspBuilder('/app');
 
 main.link('/v1', app);
 
 createServerApp()
   .link(main) // same as link('/', main)
-  .build(http)
+  .build(http);
 // the namespaces created will be '/main' and '/main/v1/app'
 
-http.listen(3000, function(){
+http.listen(3000, function () {
   console.log('listening on *:3000');
 });
 ```
@@ -251,14 +257,12 @@ You can also limit the namespaces used to build the server.
 Example
 
 ```js
-const { NspBuilder, createServerApp } = require('@novice1/socket');
+import { NspBuilder, createServerApp } from '@novice1/socket';
 
-let appNsp = new NspBuilder('/app');
-let otherNsp = new NspBuilder();
+const appNsp = new NspBuilder('/app');
+const otherNsp = new NspBuilder();
 
-createServerApp()
-  .link(appNsp)
-  .link('/other', otherNsp);
+createServerApp().link(appNsp).link('/other', otherNsp);
 // the namespaces created will be '/app' and '/other'
 
 createServerApp(['/main']) // limit to '/main'
@@ -273,16 +277,16 @@ It will build the `socket.io` server from a `http` server.
 The settings (namespaces, etc ...) need to be set before the build.
 
 ```js
-const { NspBuilder, createServerApp } = require('@novice1/socket');
-const http = require('http').createServer();
+import { NspBuilder, createServerApp } from '@novice1/socket';
+import { createServer } from 'http';
 
-let appNsp = new NspBuilder('/app');
+const http = createServer();
 
-createServerApp()
-  .link(app)
-  .build(http); // build socket.io server
+const appNsp = new NspBuilder('/app');
 
-http.listen(3000, function(){
+createServerApp().link(appNsp).build(http); // build socket.io server
+
+http.listen(3000, function () {
   console.log('listening on *:3000');
 });
 ```
@@ -292,9 +296,9 @@ http.listen(3000, function(){
 Get a description of events listened by namespaces with the property `events`.
 
 ```js
-const { createServerApp } = require('@novice1/socket');
+import { createServerApp } from '@novice1/socket';
 
-let app = createServerApp();
+const app = createServerApp();
 
 // do something
 
@@ -308,10 +312,12 @@ Get an array of the active namespaces (= created on the server) with the propert
 You can also get one [namespace](https://socket.io/docs/v4/server-api/#Namespace) with the method `getNamespace`.
 
 ```js
-const { createServerApp } = require('@novice1/socket');
-const http = require('http').createServer();
+import { createServerApp } from '@novice1/socket';
+import { createServer } from 'http';
 
-let app = createServerApp();
+const http = createServer();
+
+const app = createServerApp();
 
 // do something
 
@@ -320,7 +326,7 @@ app.build(http);
 console.log(app.activeNamespaces);
 // displays an array of strings
 
-let nsp = app.getNamespace('/');
+const nsp = app.getNamespace('/');
 // get namespace '/' from socket.io server
 ```
 
@@ -330,20 +336,22 @@ You can disconnect all clients and stop handling future connections by executing
 To rebuild the application you can call the method `build` with no arguments.
 
 ```js
-const { createServerApp } = require('@novice1/socket');
-const http = require('http').createServer();
+import { createServerApp } from '@novice1/socket';
+import { createServer } from 'http';
 
-let app = createServerApp();
+const http = createServer();
+
+const app = createServerApp();
 
 // do something
 
 app.build(http);
 
-http.listen(3000, function(){
+http.listen(3000, function () {
   console.log('listening on *:3000');
 
   app.destroy();
-  // all connections closed and no future connections 
+  // all connections closed and no future connections
 
   app.build();
   // connection possible again
@@ -353,7 +361,6 @@ http.listen(3000, function(){
 #### Close
 
 Closes the Socket.IO server and the underlying HTTP server.
-
 
 ## NspBuilder methods
 
@@ -387,50 +394,60 @@ Closes the Socket.IO server and the underlying HTTP server.
 - **onConnection(..fn) : this**
 - **onDisconnect(..fn) : this**
 
-
 ## Utils
 
 ### explodeData
 
 ```js
-const { NspBuilder, utils } = require('@novice1/socket');
+import { NspBuilder, utils } from '@novice1/socket';
+
 const { explodeData } = utils;
 
-let defaultNamespace = new NspBuilder() 
-  .add('chat message', explodeData(function(msg) {
+const defaultNamespace = new NspBuilder().add(
+  'chat message',
+  explodeData(function (msg) {
     // - this.req
     // - this.res
     // - this.next
     console.log('message: ' + msg);
     this.res.of().emit('chat message', msg);
-  }));
+  })
+);
 ```
 
 ### errorHandler
 
 ```js
-const { NspBuilder, utils } = require('@novice1/socket');
+import { NspBuilder, utils } from '@novice1/socket';
+
 const { errorHandler } = utils;
 
-let defaultNamespace = new NspBuilder() 
-  .add('chat message', errorHandler(function(req, res) {
+const defaultNamespace = new NspBuilder().add(
+  'chat message',
+  errorHandler(function (req, res) {
     // do something that could throw an error
-  }, 'chat error'));
-  // a message will be emitted on 'chat error' if an Error is thrown
+  }, 'chat error')
+);
+// a message will be emitted on 'chat error' if an Error is thrown
 ```
 
 Other examples
 
 ```js
-const { NspBuilder, utils } = require('@novice1/socket');
-const { errorHandler } = utils;
+import { NspBuilder, utils } from '@novice1/socket';
 
-let defaultNamespace = new NspBuilder() 
-  .add('chat message', errorHandler(explodeData(function(msg) {
-    // do something
-  }), 'chat error'));
+const { errorHandler, explodeData } = utils;
+
+const defaultNamespace = new NspBuilder().add(
+  'chat message',
+  errorHandler(
+    explodeData(function (msg) {
+      // do something
+    }),
+    'chat error'
+  )
+);
 ```
-
 
 ## References
 

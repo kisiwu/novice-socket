@@ -2,7 +2,7 @@ import { type Config } from 'prettier';
 
 const config: Config = {
     printWidth: 120,
-    tabWidth: 4,
+    tabWidth: 2,
     useTabs: false,
     semi: true,
     singleQuote: true,
