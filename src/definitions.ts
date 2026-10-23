@@ -1,8 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { BroadcastOperator, Namespace, Socket, Server } from 'socket.io';
-import { ExtendedError } from 'socket.io/dist/namespace';
-import { Handshake } from 'socket.io/dist/socket-types';
-import { DefaultEventsMap, EventsMap } from 'socket.io/dist/typed-events';
+import { BroadcastOperator, DefaultEventsMap, ExtendedError, Namespace, Socket, Server } from 'socket.io';
+
+export interface EventsMap {
+    [event: string]: any;
+}
+
+export type Handshake = Socket['handshake'];
 
 export type Middleware = (socket: Socket, next: (err?: ExtendedError | undefined) => void) => void;
 export type SocketMiddleware = (socket: Socket, event: unknown[], next: (err?: Error | undefined) => void) => void;

@@ -1,4 +1,9 @@
 .github
+.husky
+.vscode
+.prettierignore
+*.config.mjs
+*.config.mts
 typedocIncludes
 docs
 localbckp*

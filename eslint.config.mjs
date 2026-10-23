@@ -4,7 +4,8 @@ import stylisticJs from '@stylistic/eslint-plugin';
 import typescriptEslint from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 import eslintConfigPrettier from 'eslint-config-prettier/flat';
-import importPlugin from 'eslint-plugin-import';
+import { importX } from 'eslint-plugin-import-x';
+import { createTypeScriptImportResolver } from 'eslint-import-resolver-typescript'
 import { defineConfig } from 'eslint/config';
 import globals from 'globals';
 import path from 'node:path';
@@ -20,21 +21,19 @@ const compat = new FlatCompat({
 });
 
 export default defineConfig([
-    { ignores: ['lib/', 'dist/', 'build/', 'coverage/', '.husky/', 'assets/', 'docs/'] },
+    { ignores: ['lib/', 'dist/', 'build/', 'coverage/', '.husky/', 'assets/', 'docs/', 'private/'] },
     mochaPlugin.configs.recommended,
     {
         extends: compat.extends(
             'eslint:recommended',
             'plugin:@typescript-eslint/recommended',
-            'plugin:import/recommended',
-            'plugin:import/typescript'
         ),
         files: ['{src,test}/**/*.ts', '**/*.mts'],
 
         plugins: {
             '@typescript-eslint': typescriptEslint,
             '@stylistic': stylisticJs,
-            import: importPlugin,
+            'import-x': importX,
         },
 
         languageOptions: {
@@ -58,15 +57,15 @@ export default defineConfig([
                     varsIgnorePattern: '^_'
                 }
             ],
-            'import/no-cycle': ['error', { maxDepth: Infinity }]
+            'import-x/no-cycle': ['error', { maxDepth: Infinity }],
         },
 
         settings: {
-            'import/resolver': {
-                typescript: {
+            'import-x/resolver-next': [
+                createTypeScriptImportResolver({
                     project: './tsconfig.json',
-                },
-            },
+                })
+            ],
         },
     },
     {
