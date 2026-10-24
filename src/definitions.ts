@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { BroadcastOperator, DefaultEventsMap, ExtendedError, Namespace, Socket, Server } from 'socket.io';
+import type { BroadcastOperator, DefaultEventsMap, ExtendedError, Namespace, Socket, Server } from 'socket.io';
 
 export interface EventsMap {
   [event: string]: any;

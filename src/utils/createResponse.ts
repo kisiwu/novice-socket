@@ -1,5 +1,5 @@
-import { Response } from '../definitions';
-import { Namespace, Socket, Server } from 'socket.io';
+import type { Response } from '../definitions';
+import type { Namespace, Socket, Server } from 'socket.io';
 
 function createResponse(socket: Socket, nsp: Namespace, io: Server): Response {
   const response: Response = (() => {

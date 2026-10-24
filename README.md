@@ -1,11 +1,24 @@
 # @novice1/socket
 
-A way of building server side [socket.io](https://www.npmjs.com/package/socket.io) applications.
+Simplifies building server-side [Socket.IO](https://www.npmjs.com/package/socket.io) applications. It provides:
+
+- **Namespace builders** to group events under a namespace.
+- **Event handlers with middleware support**, so you can chain logic per event.
+- **Application lifecycle hooks** such as connection and disconnect handling.
+- **Utilities** for building robust real-time communication.
 
 ## Installation
 
+Install the package together with `socket.io`, which is a peer dependency and must be installed in your project:
+
 ```bash
-$ npm install @novice1/socket
+npm install @novice1/socket "socket.io@^4.8.4"
+```
+
+If you already have `socket.io` 4.8.4 or later in your project, you only need:
+
+```bash
+npm install @novice1/socket
 ```
 
 ## How to use

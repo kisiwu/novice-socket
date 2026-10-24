@@ -1,7 +1,13 @@
-import { Middleware, SocketMiddleware, ListenerBuilderJson, Controller, ListenerBuilderSettings } from './definitions';
+import type {
+  Middleware,
+  SocketMiddleware,
+  ListenerBuilderJson,
+  Controller,
+  ListenerBuilderSettings,
+} from './definitions';
 import { ListenerBuilder } from './listenerBuilder';
 import { flatten } from 'array-flatten';
-import { Namespace, Server, Socket } from 'socket.io';
+import type { Namespace, Server, Socket } from 'socket.io';
 
 export class NspBuilder {
   #_id: string;

@@ -1,7 +1,7 @@
 {
   "name": "@novice1/socket",
   "private": false,
-  "version": "0.4.8",
+  "version": "0.4.9",
   "description": "Simplifies creating server-side Socket.IO applications by providing namespace and event builders, middleware support, and utilities for robust real-time communication.",
   "main": "lib/index.js",
   "homepage": "https://kisiwu.github.io/novice-socket/latest/",
@@ -23,7 +23,6 @@
   "license": "MIT",
   "dependencies": {
     "array-flatten": "^3.0.0",
-    "socket.io": "^4.8.4",
     "socket.io-adapter": "^2.5.8",
     "tslib": "^2.8.1"
   },
@@ -51,9 +50,13 @@
     "kaukau": "^5.0.1",
     "lint-staged": "^17.6.0",
     "prettier": "^3.9.10",
+    "socket.io": "^4.8.4",
     "ts-node": "^10.9.2",
     "typedoc": "^0.28.20",
     "typescript": "npm:@typescript/typescript6@^6.0.0",
     "typescript-eslint": "^8.71.2"
+  },
+  "peerDependencies": {
+    "socket.io": "^4.8.4"
   }
 }

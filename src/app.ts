@@ -1,11 +1,17 @@
-import { Middleware, SocketMiddleware, ListenerBuilderJson, Controller, ListenerBuilderSettings } from './definitions';
-import { ListenerBuilder } from './listenerBuilder';
+import type {
+  Middleware,
+  SocketMiddleware,
+  ListenerBuilderJson,
+  Controller,
+  ListenerBuilderSettings,
+} from './definitions';
+import type { ListenerBuilder } from './listenerBuilder';
 import { NspBuilder } from './nspBuilder';
 import toArray from './utils/toArray';
 import { flatten } from 'array-flatten';
-import { Server as HttpServer } from 'http';
-import { Namespace, Server, ServerOptions, Socket } from 'socket.io';
-import { Adapter } from 'socket.io-adapter';
+import type { Server as HttpServer } from 'http';
+import { type Namespace, Server, type ServerOptions, type Socket } from 'socket.io';
+import type { Adapter } from 'socket.io-adapter';
 
 export class ServerApp {
   #onConnectionFn: ((socket: Socket, nsp: Namespace, server: Server) => void)[];

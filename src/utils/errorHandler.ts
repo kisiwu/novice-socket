@@ -1,4 +1,4 @@
-import { Controller } from '../definitions';
+import type { Controller } from '../definitions';
 
 function errorHandler<DataType, ErrorType>(
   fn: Controller<DataType, ErrorType>,

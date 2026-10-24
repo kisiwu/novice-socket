@@ -1,4 +1,4 @@
-import {
+import type {
   Controller,
   ListenerBuilderJson,
   ListenerBuilderSettings,
@@ -10,7 +10,7 @@ import {
 import createResponse from './utils/createResponse';
 import toArray from './utils/toArray';
 import { flatten } from 'array-flatten';
-import { Namespace, Server, Socket } from 'socket.io';
+import type { Namespace, Server, Socket } from 'socket.io';
 
 /**
  * Event builder

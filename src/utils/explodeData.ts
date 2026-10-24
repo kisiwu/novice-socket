@@ -1,4 +1,4 @@
-import { Controller, Request, Response, NextFunc } from '../definitions';
+import type { Controller, Request, Response, NextFunc } from '../definitions';
 
 export type Func<DataType, ErrorType> = (
   this: {
