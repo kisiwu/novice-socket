@@ -72,6 +72,46 @@ http.listen(3000, function () {
 });
 ```
 
+### With Bun
+
+[Bun](https://bun.sh) is supported through the [`@socket.io/bun-engine`](https://www.npmjs.com/package/@socket.io/bun-engine) package. See the [Socket.IO Bun engine announcement](https://socket.io/blog/bun-engine/) for background.
+
+```bash
+bun add @socket.io/bun-engine
+```
+
+```ts
+import { createServerApp } from '@novice1/socket';
+import { Server as Engine } from '@socket.io/bun-engine';
+
+const socketApp = createServerApp()
+  .onConnection((socket, nsp) => {
+    // ...
+  })
+  .onDisconnect((reason, socket, nsp) => {
+    // ...
+  })
+  .build();
+
+// Bun engine instance. CORS configuration is optional.
+const engine = new Engine({
+  path: '/socket.io/',
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST'],
+  },
+});
+
+socketApp.getServer()?.bind(engine);
+
+export default {
+  port: 3000,
+  ...engine.handler(),
+};
+```
+
+Run it with `bun run index.ts` (or `bun index.ts`).
+
 ### Namespaces
 
 #### Settings
