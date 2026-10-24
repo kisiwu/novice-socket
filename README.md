@@ -110,8 +110,6 @@ export default {
 };
 ```
 
-Run it with `bun run index.ts` (or `bun index.ts`).
-
 ### Namespaces
 
 #### Settings
